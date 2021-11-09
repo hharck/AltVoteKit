@@ -1,7 +1,10 @@
 public struct Validator: Validateable{
 	public typealias closureType = ([SingleVote], _ eligibleUsers: Set<UserID>, _ options: [Option]) -> [SingleVote]
 	
-	/// The name of the validator
+	/// The id of the validator
+	public let id: String
+	
+	/// A name for use in UI
 	public let name: String
 	
 	/// Generates an error string for why a vote wasn't validated
@@ -19,10 +22,11 @@ public struct Validator: Validateable{
 	public func validate(_ votes: [SingleVote], _ eligibleUsers: Set<UserID>, allOptions: [Option]) -> ValidationResult{
 		let offenders = closure(votes, eligibleUsers, allOptions)
 		let offenseTexts = offenders.map{offenseText($0, [])}
-		return ValidationResult(name: self.name, errors: offenseTexts)
+		return ValidationResult(name: self.id, errors: offenseTexts)
 	}
 
-	public init(name: String, offenseText: @escaping (_ for: SingleVote, _ options: [Option]) -> String, closure: @escaping closureType){
+	public init(id: String, name: String, offenseText: @escaping (_ for: SingleVote, _ options: [Option]) -> String, closure: @escaping closureType){
+		self.id = id
 		self.name = name
 		self.offenseText = offenseText
 		self.closure = closure
@@ -32,7 +36,7 @@ public struct Validator: Validateable{
 extension Validator: Equatable{
 	public static func == (lhs: Validator, rhs: Validator) -> Bool {
 		//Assuming all names are unique
-		lhs.name == rhs.name
+		lhs.id == rhs.id
 	}
 }
 
