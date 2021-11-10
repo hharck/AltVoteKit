@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Option: Hashable, Codable{
+public struct Option: Hashable, Equatable, Codable{
 	public var name: String
 	public var subTitle: String?
 	public var customData: [String: Data]

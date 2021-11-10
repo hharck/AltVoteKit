@@ -1,6 +1,6 @@
 public typealias UserID = String
 
-protocol AltVote: Actor{
+protocol AltVote: Actor, Equatable{
 	func validate() -> [ValidationResult]
 	func count(force: Bool, excluding: [Option]) async throws -> [Option: UInt]
 
@@ -15,7 +15,7 @@ protocol AltVote: Actor{
 	init(options: [Option], votes: [SingleVote], validators: [Validateable], eligibleUsers: Set<UserID>, tieBreakingRules: [TieBreakable])
 }
 
-extension AltVote{
+extension AltVote{	
 	public func validate() -> [ValidationResult] {
 		guard !votes.isEmpty else {
 			return [ValidationResult(name: "No votes cast", errors: [])]
