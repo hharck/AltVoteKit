@@ -1,4 +1,4 @@
-struct TieBreaker: normalTieBreakable{
+public struct TieBreaker: normalTieBreakable{
 	
 	/// The name of the TieBreaker
 	public let name: String
@@ -13,7 +13,7 @@ struct TieBreaker: normalTieBreakable{
 	///   - options: The options that are in a tie
 	///   - optionsLeft: The total number of options left
 	/// - Returns: Options and their status
-	func breakTie(votes: [SingleVote], options: [Option], optionsLeft: Int) -> [Option : TieBreak] {
+	public func breakTie(votes: [SingleVote], options: [Option], optionsLeft: Int) -> [Option : TieBreak] {
 		assert(options.count <= optionsLeft)
 		if options.isEmpty{
 			return [:]

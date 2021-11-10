@@ -1,5 +1,5 @@
 // Adds some convenience initialisers to Validator
-extension Validator{
+extension VoteValidator{
 	public init(id: String, name: String, offenseText: @escaping (_ for: SingleVote) -> String, closure: @escaping closureType){
 		self.init(id: id, name: name, offenseText: {u, o in offenseText(u)}, closure: closure)
 	}

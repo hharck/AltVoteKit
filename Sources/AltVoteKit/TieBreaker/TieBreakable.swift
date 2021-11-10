@@ -1,11 +1,11 @@
-protocol TieBreakable{
+public protocol TieBreakable{
 		
 }
 
-protocol normalTieBreakable{
+public protocol normalTieBreakable{
 	func breakTie(votes: [SingleVote], options: [Option], optionsLeft: Int) -> [Option : TieBreak]
 }
 
-enum TieBreak{
+public enum TieBreak{
 	case remove, keep
 }

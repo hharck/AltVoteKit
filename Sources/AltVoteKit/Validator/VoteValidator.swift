@@ -1,4 +1,4 @@
-public struct Validator: Validateable{
+public struct VoteValidator: Validateable{
 	public typealias closureType = ([SingleVote], _ eligibleUsers: Set<UserID>, _ options: [Option]) -> [SingleVote]
 	
 	/// The id of the validator
@@ -33,8 +33,8 @@ public struct Validator: Validateable{
 	}
 }
 
-extension Validator: Equatable{
-	public static func == (lhs: Validator, rhs: Validator) -> Bool {
+extension VoteValidator: Equatable{
+	public static func == (lhs: VoteValidator, rhs: VoteValidator) -> Bool {
 		//Assuming all names are unique
 		lhs.id == rhs.id
 	}
