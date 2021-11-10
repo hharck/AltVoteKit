@@ -7,7 +7,7 @@ public protocol TieBreakable{
 	var id: String {get}
 }
 
-public protocol normalTieBreakable{
+public protocol normalTieBreakable: TieBreakable{
 	func breakTie(votes: [SingleVote], options: [Option], optionsLeft: Int) -> [Option : TieBreak]
 }
 
