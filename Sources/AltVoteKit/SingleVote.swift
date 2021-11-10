@@ -1,10 +1,10 @@
 /// Defines the vote of a single person
 public struct SingleVote: Hashable, Codable{
-	var userID: UserID
+	public var userID: UserID
 	
-	var rankings: [Option]
+	public var rankings: [Option]
 	
-	init(_ userID: UserID, rankings: [Option]){
+	public init(_ userID: UserID, rankings: [Option]){
 		self.userID = userID
 		self.rankings = rankings
 	}
