@@ -6,6 +6,10 @@
 //
 
 public struct UserInteractiveTieBreak: TieBreakable{
+	public var name: String
+	
+	public var id: String
+	
 	public func breakTie(votes: [SingleVote], options: [Option], optionsLeft: Int) -> [String]{
 		fatalError("User interactive tie breakers hasn't been implemented")
 	}
@@ -13,5 +17,5 @@ public struct UserInteractiveTieBreak: TieBreakable{
 }
 
 extension TieBreaker{
-	public static let userInteractiveTieBreak = UserInteractiveTieBreak()
+	public static let userInteractiveTieBreak = UserInteractiveTieBreak(name: "", id: "")
 }

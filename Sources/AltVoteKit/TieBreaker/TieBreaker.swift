@@ -1,7 +1,16 @@
 public struct TieBreaker: normalTieBreakable{
+	internal init(name: String, id: String, closure: @escaping ([SingleVote], [Option], Int) -> [Option : TieBreak]) {
+		self.name = name
+		self.id = id
+		self.closure = closure
+	}
+	
 	
 	/// The name of the TieBreaker
 	public let name: String
+	
+	/// The id of the TieBreaker
+	public let id: String
 	
 	/// Returns every vote in violation of the validator
 	private var closure: (_ votes: [SingleVote], _ options: [Option], _ optionsLeft: Int) -> [Option : TieBreak]
@@ -22,45 +31,6 @@ public struct TieBreaker: normalTieBreakable{
 			assert(Set(result.keys) == Set(options), "Tie breaker not returning a value for every option")
 			return result
 		}
-	}
-}
-
-
-extension TieBreaker{
-	
-	/// Removes a random option
-	static let removeRandom = TieBreaker(name: "Remove random") { _, options, _  in
-		var dict = options.reduce(into: [Option: TieBreak]()) {
-			$0[$1] = TieBreak.keep
-		}
-		
-		dict[dict.keys.randomElement()!] = TieBreak.remove
-		return dict
-	}
-	
-	/// Keeps a random option
-	static let keepRandom = TieBreaker(name: "Keep random") { _, options, _  in
-		var dict = options.reduce(into: [Option: TieBreak]()) {
-			$0[$1] = TieBreak.remove
-		}
-		
-		dict[dict.keys.randomElement()!] = TieBreak.keep
-		return dict
-	}
-	
-	/// Removes everyone that's tied, unless it's every option that's tied
-	static let dropAllExcLast = TieBreaker(name: "Drop all in last") { _, options, numberLeft in
-		guard numberLeft != options.count else {
-			return options.reduce(into: [Option: TieBreak]()) {
-				//Keeps all
-				$0[$1] = TieBreak.keep
-			}
-		}
-		
-		return options.reduce(into: [Option: TieBreak]()) {
-			$0[$1] = TieBreak.remove
-		}
-		
 	}
 }
 
