@@ -12,3 +12,9 @@ public struct Option: Hashable, Equatable, Codable{
 		self.id = UUID()
 	}
 }
+
+extension Option: ExpressibleByStringLiteral{
+	public init(stringLiteral value: String) {
+		self.init(value)
+	}
+}

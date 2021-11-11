@@ -7,12 +7,12 @@ protocol AltVote: Actor{
 	var options: [Option] {get set}
 	var votes: [SingleVote] {get set}
 	var validators: [Validateable] {get set}
-	var eligibleUsers: Set<UserID> {get set}
+	var eligibleVoters: Set<UserID> {get set}
 	
 	/// Rules for breaking a tie, applied in the order given.
 	var tieBreakingRules: [TieBreakable] {get set}
 
-	init(options: [Option], votes: [SingleVote], validators: [Validateable], eligibleUsers: Set<UserID>, tieBreakingRules: [TieBreakable])
+	init(options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
 }
 
 extension AltVote{	
@@ -20,11 +20,11 @@ extension AltVote{
 		guard !votes.isEmpty else {
 			return [ValidationResult(name: "No votes cast", errors: [])]
 		}
+		print(votes.count)
 		return validators.map{ validator -> ValidationResult in
-			validator.validate(votes, eligibleUsers, allOptions: options)
+			validator.validate(votes, eligibleVoters, allOptions: options)
 		}
 	}
-	
 	
 	
 	/// Counts the number of highest priority votes given to an option
@@ -55,23 +55,57 @@ extension AltVote{
 			return vote
 		}
 		
-		//Counts the number og highest priority votes for each candidate
-		return excludingVotes.reduce(into: [Option: UInt]()) { partialResult, vote in
+		//Sets zero votes for all allowed options
+		let dict = Set(options).subtracting(excluding).reduce(into: [Option: UInt]()) { partialResult, option in
+			partialResult[option] = 0
+		}
+		
+		//Counts the number of highest priority votes for each candidate
+		return excludingVotes.reduce(into: dict) { partialResult, vote in
 			let primaryOption = vote.rankings.first!
-			
-			if partialResult[primaryOption] == nil {
-				partialResult[primaryOption] = 1
-			} else {
-				partialResult[primaryOption]! += 1
-			}
+			partialResult[primaryOption]! += 1
 		}
 	}
 	
-	func setVotes(_ votes: [SingleVote]) async{
+}
+
+//Setters
+extension AltVote{
+	public func setVotes(_ votes: [SingleVote]) async{
 		self.votes = votes
 	}
 	
-	func setOptions(_ options: [Option]) async{
+	public func addVotes(_ vote: SingleVote) async{
+		self.votes.append(vote)
+	}
+	
+	public func addVotes(_ votes: [SingleVote]) async{
+		self.votes += votes
+	}
+	
+	public func setOptions(_ options: [Option]) async{
 		self.options = options
 	}
+	
+	public func addOptions(_ option: Option) async{
+		self.options.append(option)
+	}
+	
+	public func addOptions(_ options: [Option]) async{
+		self.options += options
+	}
+	
+	public func setEligigbleVoters(_ voters: Set<UserID>) async{
+		self.eligibleVoters = voters
+	}
+	
+	public func addEligigbleVoters(_ voter: UserID) async{
+		self.eligibleVoters.insert(voter)
+	}
+	
+	public func addEligigbleVoters(_ voters: Set<UserID>) async{
+		self.eligibleVoters.formUnion(voters)
+	}
+	
 }
+
