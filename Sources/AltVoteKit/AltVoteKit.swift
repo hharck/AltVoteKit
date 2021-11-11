@@ -1,6 +1,6 @@
 public typealias UserID = String
 
-protocol AltVote: Actor, Equatable{
+protocol AltVote: Actor{
 	func validate() -> [ValidationResult]
 	func count(force: Bool, excluding: [Option]) async throws -> [Option: UInt]
 
