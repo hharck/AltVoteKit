@@ -1,24 +1,5 @@
-import Foundation
-
-public typealias UserID = String
-
-public protocol AltVote: Actor, Hashable{
-	func validate() -> [ValidationResult]
-	func count(force: Bool, excluding: [Option]) async throws -> [Option: UInt]
-
-	var options: [Option] {get set}
-	var votes: [SingleVote] {get set}
-	var validators: [Validateable] {get set}
-	var eligibleVoters: Set<UserID> {get set}
-	
-	/// Rules for breaking a tie, applied in the order given.
-	var tieBreakingRules: [TieBreakable] {get set}
-	
-	var id: UUID {get}
-	init(id: UUID, options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
-}
-
-extension AltVote{	
+extension AltVote{
+	/// Validates that the entire vote follows the assertings put in the validators array
 	public func validate() -> [ValidationResult] {
 		guard !votes.isEmpty else {
 			return [ValidationResult(name: "No votes cast", errors: [])]
@@ -29,7 +10,6 @@ extension AltVote{
 		}
 	}
 	
-	
 	/// Counts the number of highest priority votes given to an option
 	/// - Parameters:
 	///   - force: Wether to count without regard to validations
@@ -39,11 +19,13 @@ extension AltVote{
 		// Checks that all votes are valid
 		if !force{
 			let validationResults = self.validate()
+			
+			// If any validation has en error, thrwo it
 			guard validationResults.countErrors == 0 else {
 				throw validationResults
 			}
 		}
-
+		
 		//Removes all excluded options_
 		let excludingVotes = votes.compactMap { vote -> SingleVote? in
 			var vote = vote
@@ -74,38 +56,49 @@ extension AltVote{
 
 //Setters
 extension AltVote{
+	/// Sets the votes property, overriding any existing information
 	public func setVotes(_ votes: [SingleVote]) async{
 		self.votes = votes
 	}
 	
+	/// Adds a vote to the list of votes
 	public func addVotes(_ vote: SingleVote) async{
 		self.votes.append(vote)
 	}
 	
+	/// Adds a set of votes to the list of votes
 	public func addVotes(_ votes: [SingleVote]) async{
 		self.votes += votes
 	}
 	
+	/* These may break the expectations of some validators
+	/// Defines the possible options for the votes; may override old votes
 	public func setOptions(_ options: [Option]) async{
 		self.options = options
 	}
 	
+	/// Adds another option to the vote
 	public func addOptions(_ option: Option) async{
 		self.options.append(option)
 	}
 	
+	/// Adds a set of options to the vote
 	public func addOptions(_ options: [Option]) async{
 		self.options += options
 	}
-	
+	*/
+	 
+	/// Sets the eligible voters property, overriding any existing information
 	public func setEligigbleVoters(_ voters: Set<UserID>) async{
 		self.eligibleVoters = voters
 	}
 	
+	/// Adds an eligible voter
 	public func addEligigbleVoters(_ voter: UserID) async{
 		self.eligibleVoters.insert(voter)
 	}
 	
+	/// Adds multiple eligible voters
 	public func addEligigbleVoters(_ voters: Set<UserID>) async{
 		self.eligibleVoters.formUnion(voters)
 	}

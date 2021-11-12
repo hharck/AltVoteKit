@@ -29,6 +29,6 @@ extension Array where Element == ValidationResult{
 	}
 }
 
-//Makes it possible to throw an array of Validation results
+// Makes it possible to throw an array of Validation results
 extension ValidationResult: Sendable{}
 extension Array: Error where Element == ValidationResult{}

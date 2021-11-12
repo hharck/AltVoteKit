@@ -9,6 +9,7 @@ public struct SingleVote: Hashable, Codable{
 		self.rankings = rankings
 	}
 	
+	/// Used for creating a user that hasn't voted
 	internal init(bareBonesVote id: UserID){
 		userID = id
 		rankings = []
