@@ -2,7 +2,7 @@ import Foundation
 
 public typealias UserID = String
 
-public protocol AltVote: Actor{
+public protocol AltVote: Actor, Hashable{
 	func validate() -> [ValidationResult]
 	func count(force: Bool, excluding: [Option]) async throws -> [Option: UInt]
 
