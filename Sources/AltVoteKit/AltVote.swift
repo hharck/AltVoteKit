@@ -1,3 +1,5 @@
+import Foundation
+
 public typealias UserID = String
 
 protocol AltVote: Actor{
@@ -11,7 +13,8 @@ protocol AltVote: Actor{
 	
 	/// Rules for breaking a tie, applied in the order given.
 	var tieBreakingRules: [TieBreakable] {get set}
-
+	
+	var id: UUID {get}
 	init(options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
 }
 
