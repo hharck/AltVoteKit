@@ -15,7 +15,7 @@ public protocol AltVote: Actor{
 	var tieBreakingRules: [TieBreakable] {get set}
 	
 	var id: UUID {get}
-	init(options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
+	init(id: UUID, options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
 }
 
 extension AltVote{	
