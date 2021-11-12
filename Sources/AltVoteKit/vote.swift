@@ -1,7 +1,9 @@
 import Foundation
 public actor Vote: AltVote{
-	public init(id: UUID, options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable]) {
+	
+	public init(id: UUID, name: String, options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable]) {
 		self.id = id
+		self.name = name
 		self.options = options
 		self.votes = votes
 		self.validators = validators
@@ -10,6 +12,7 @@ public actor Vote: AltVote{
 	}
 	
 	public let id: UUID
+	public let name: String
 	public var options: [Option]
 	public var votes: [SingleVote]
 	public var validators: [Validateable]
