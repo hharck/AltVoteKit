@@ -61,20 +61,30 @@ extension AltVote{
 
 //Setters
 extension AltVote{
-	//MARK: Votes
+	//MARK: Set votes
 	/// Sets the votes property, overriding any existing information
-	public func setVotes(_ votes: [SingleVote]) async{
+	/// - Parameter votes: The votes to set
+	/// - Returns: Whether all userIDs were unique
+	@discardableResult public func setVotes(_ votes: [SingleVote]) async -> Bool{
+		guard votes.map(\.userID).nonUniques.isEmpty else {
+			return false
+		}
+		
 		self.votes = votes
+		return true
 	}
 	
 	/// Adds a vote to the list of votes
-	public func addVotes(_ vote: SingleVote) async{
+	/// - Parameter vote: The vote to set
+	/// - Returns: Whether all userIDs were unique
+	@discardableResult public func addVotes(_ vote: SingleVote) async -> Bool{
+		let user = vote.userID
+		if self.votes.contains(where: {$0.userID == user}){
+			return false
+		}
+		
 		self.votes.append(vote)
-	}
-	
-	/// Adds a set of votes to the list of votes
-	public func addVotes(_ votes: [SingleVote]) async{
-		self.votes += votes
+		return true
 	}
 	
 	/* These may break the expectations of some validators
