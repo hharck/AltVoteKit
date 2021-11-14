@@ -104,10 +104,12 @@ extension AltVote{
 		self.eligibleVoters.formUnion(voters)
 	}
 	
-	/// Workaround
-	public func getID() -> UUID{
-		self.id
+	public func setData(key: String, value: String?) async {
+		self.customData[key] = value
 	}
 	
+	public func getData(key: String) async -> String?{
+		self.customData[key]
+	}
 }
 

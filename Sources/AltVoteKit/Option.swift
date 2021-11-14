@@ -1,7 +1,7 @@
 import Foundation
 
 /// Defines a candidate in vote
-public struct Option: Hashable, Equatable, Codable{
+public struct Option: Sendable, Hashable, Equatable, Codable{
 	public let id: UUID
 	public var name: String
 	public var subTitle: String?

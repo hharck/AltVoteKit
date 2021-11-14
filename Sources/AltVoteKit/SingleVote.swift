@@ -1,5 +1,5 @@
 /// Defines the vote of a single person
-public struct SingleVote: Hashable, Codable{
+public struct SingleVote: Sendable, Hashable, Codable{
 	public var userID: UserID
 	
 	public var rankings: [Option]

@@ -5,7 +5,7 @@ final class AltVoteKitTests: XCTestCase {
     func testExample() async throws {
 		let opt: [Option] = ["Person 1", "Person 2", "Person 3"]
 		
-		let vote = Vote(id: UUID(), name: "", options: opt, votes: [SingleVote("Hans", rankings: opt.reversed())], validators: VoteValidator.defaultValidators, eligibleVoters: ["Hans"], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom], customData: [:])
+		let vote = Vote(id: UUID(), name: "", options: opt, votes: [SingleVote("Hans", rankings: opt.reversed())], validators: VoteValidator.defaultValidators, eligibleVoters: ["Hans"], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom])
 		
 		let countAll = try await vote.count()
 		let countWo0 = try await vote.count(force: false, excluding: [opt[0]])
