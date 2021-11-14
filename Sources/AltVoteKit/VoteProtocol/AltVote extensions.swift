@@ -131,7 +131,7 @@ extension AltVote{
 	
 	
 	/// Checks if a given userID already has voted in this vote
-	public func hasUserVoted(_ user: UserID) -> Bool{
+	public func hasUserVoted(_ user: UserID) async -> Bool{
 		votes.contains(where: {
 			$0.userID == user
 		})
