@@ -1,6 +1,6 @@
 extension Validateable{
 	/// Will not validate any user voting multiple times
-	public static var oneVotePerUser: VoteValidator {
+	internal static var oneVotePerUser: VoteValidator {
 		VoteValidator(id: "OneVotePerUser", name: "One vote per. user", offenseText: {"\($0.userID) voted multiple times"}) { votes, _  in
 			
 			var allUnique = [UserID]()
@@ -66,5 +66,5 @@ extension Validateable{
 			votes.filter {$0.rankings.isEmpty}
 		}
 	}
-	public static var defaultValidators: [Validateable] {[oneVotePerUser, everyoneHasVoted, noForeignVotes, preferenceForAllCandidates, noBlankVotes]}
+	public static var defaultValidators: [Validateable] {[everyoneHasVoted, noForeignVotes, preferenceForAllCandidates, noBlankVotes]}
 }

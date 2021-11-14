@@ -1,12 +1,16 @@
 import Foundation
 extension AltVote{
+	internal var requiredValidators: [Validateable] {
+		[VoteValidator.oneVotePerUser]
+	}
 	/// Validates that the entire vote follows the assertings put in the validators array
 	public func validate() -> [ValidationResult] {
 		guard !votes.isEmpty else {
 			return [ValidationResult(name: "No votes cast", errors: [])]
 		}
 		print(votes.count)
-		return validators.map{ validator -> ValidationResult in
+		let allValidators = requiredValidators + validators
+		return allValidators.map{ validator -> ValidationResult in
 			validator.validate(votes, eligibleVoters, allOptions: options)
 		}
 	}
