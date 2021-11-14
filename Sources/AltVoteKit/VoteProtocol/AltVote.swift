@@ -26,5 +26,9 @@ public protocol AltVote: Actor, Hashable{
 	/// Rules for breaking a tie, applied in the order given.
 	var tieBreakingRules: [TieBreakable] {get set}
 	
-	init(id: UUID, name: String, options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
+	/// Extra data set by the client
+	var customData: [String: String] {get}
+
+	
+	init(id: UUID, name: String, options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable], customData: [String: String])
 }
