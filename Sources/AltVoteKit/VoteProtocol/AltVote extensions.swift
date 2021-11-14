@@ -1,3 +1,4 @@
+import Foundation
 extension AltVote{
 	/// Validates that the entire vote follows the assertings put in the validators array
 	public func validate() -> [ValidationResult] {
@@ -101,6 +102,11 @@ extension AltVote{
 	/// Adds multiple eligible voters
 	public func addEligigbleVoters(_ voters: Set<UserID>) async{
 		self.eligibleVoters.formUnion(voters)
+	}
+	
+	/// Workaround
+	public func getID() -> UUID{
+		self.id
 	}
 	
 }
