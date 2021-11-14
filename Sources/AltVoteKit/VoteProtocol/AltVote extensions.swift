@@ -114,7 +114,10 @@ extension AltVote{
 	public func setData(key: String, value: String?) async {
 		self.customData[key] = value
 	}
-	
+}
+
+//Getters
+extension AltVote{
 	/// Retrieves customData for the given key
 	public func getData(key: String) async -> String?{
 		self.customData[key]
@@ -127,5 +130,10 @@ extension AltVote{
 	}
 	
 	
+	/// Checks if a given userID already has voted in this vote
+	public func hasUserVoted(_ user: UserID) -> Bool{
+		votes.contains(where: {
+			$0.userID == user
+		})
+	}
 }
-
