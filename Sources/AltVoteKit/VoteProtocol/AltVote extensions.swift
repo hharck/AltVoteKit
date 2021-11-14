@@ -57,6 +57,7 @@ extension AltVote{
 
 //Setters
 extension AltVote{
+	//MARK: Votes
 	/// Sets the votes property, overriding any existing information
 	public func setVotes(_ votes: [SingleVote]) async{
 		self.votes = votes
@@ -89,6 +90,7 @@ extension AltVote{
 	}
 	*/
 	 
+	//MARK: Voters
 	/// Sets the eligible voters property, overriding any existing information
 	public func setEligigbleVoters(_ voters: Set<UserID>) async{
 		self.eligibleVoters = voters
@@ -104,12 +106,22 @@ extension AltVote{
 		self.eligibleVoters.formUnion(voters)
 	}
 	
+	//MARK: Custom data
 	public func setData(key: String, value: String?) async {
 		self.customData[key] = value
 	}
 	
+	/// Retrieves customData for the given key
 	public func getData(key: String) async -> String?{
 		self.customData[key]
 	}
+	
+	//MARK: Options
+	/// Retrieves an array of options
+	public func getAllOptions() async -> [Option]{
+		self.options
+	}
+	
+	
 }
 
