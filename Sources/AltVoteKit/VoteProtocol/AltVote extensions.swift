@@ -89,8 +89,12 @@ extension AltVote{
 	}
 	
 	public func resetVoteForUser(_ user: Constituent){
+		resetVoteForUser(user.id)
+	}
+	
+	public func resetVoteForUser(_ id: UUID){
 		self.votes.removeAll(where: {vote in
-			vote.user == user
+			vote.user.id == id
 		})
 	}
 	
