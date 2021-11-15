@@ -226,7 +226,7 @@ extension AltVote{
 	}
 
 	public func constituentsToCSV() -> String{
-		var csv = "Navn, Studienummer"
+		var csv = "Navn,Studienummer"
 
 		for voter in self.eligibleVoters{
 			csv += "\n"
