@@ -1,20 +1,22 @@
 extension AltVote{
 	public func findWinner(force: Bool) async throws -> [VoteOption]{
-		var winner: [AltVoteKit.VoteOption]? = nil
+		var winner: [VoteOption]? = nil
 		
 		var excluded = Set<VoteOption>()
 		let allOptions = Set(options)
 		
 		var lastCount: [VoteOption: UInt]? = nil
 		
+		//Runs untill a winner has been found
 		while winner == nil{
 			if excluded == allOptions{
 				winner = []
 			}
 			
-			
+			//Counts the number of highest priority votes for each option
 			lastCount = try await count(force: excluded.isEmpty ? force : true, excluding: Array(excluded))
 			
+			//Converts the counted votes
 			let sortedList = lastCount!
 				.map{ key, value in
 					(votes: value, option: key)
@@ -26,8 +28,9 @@ extension AltVote{
 						return first.votes > second.votes
 					}
 				}
+			
 			/// Sum of all votes
-			let totalVotes = lastCount!.map(\.value).reduce(0, +)
+			let totalVoteCount = lastCount!.map(\.value).reduce(0, +)
 			
 			//Checks for edge cases
 			if sortedList.count == 0 {
@@ -35,7 +38,8 @@ extension AltVote{
 			} else if sortedList.count == 1{
 				winner = [sortedList.first!.option]
 				continue
-			} else if totalVotes / 2 + 1 <= sortedList.first!.votes{
+				//>50% på en kandidat
+			} else if totalVoteCount / 2 + 1 <= sortedList.first!.votes{
 				winner = [sortedList.first!.option]
 				continue
 			} else {
@@ -43,7 +47,7 @@ extension AltVote{
 				let lowestVoteCount = sortedList.last!.votes
 				
 				// All the options tied for last
-				var bottom: [AltVoteKit.VoteOption] = []
+				var bottom: [VoteOption] = []
 				for i in sortedList.reversed() {
 					if i.votes != lowestVoteCount {
 						break
@@ -52,10 +56,12 @@ extension AltVote{
 					}
 				}
 				
+				// Checks if everyone is tied
 				if bottom.count == sortedList.count{
 					winner = bottom
 					continue
 				} else if bottom.count == 1{
+					//If only a single option has the lowest amount of votes, it will be excluded
 					excluded.insert(sortedList.last!.option)
 					continue
 				} else {
@@ -66,7 +72,7 @@ extension AltVote{
 						}
 						let tbResult = tb.breakTie(votes: votes, options: options, optionsLeft: allOptions.subtracting(excluded).count)
 						
-						let toRemove = tbResult.compactMap{ res -> AltVoteKit.VoteOption? in
+						let toRemove = tbResult.compactMap{ res -> VoteOption? in
 							if res.value == .remove{
 								return res.key
 							} else{
