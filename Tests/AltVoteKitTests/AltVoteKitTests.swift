@@ -5,7 +5,10 @@ final class AltVoteKitTests: XCTestCase {
     func testExample() async throws {
 		let opt: [VoteOption] = ["Person 1", "Person 2", "Person 3"]
 		
-		let vote = Vote(id: UUID(), name: "", options: opt, votes: [SingleVote("Hans", rankings: opt.reversed())], validators: VoteValidator.defaultValidators, eligibleVoters: ["Hans"], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom])
+		let voterHans = Constituent(identifier: "Hans")
+		let voterSofus = Constituent(identifier: "Sofus")
+		
+		let vote = Vote(id: UUID(), name: "", options: opt, votes: [SingleVote(voterHans, rankings: opt.reversed())], validators: VoteValidator.defaultValidators, eligibleVoters: [voterHans], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom])
 		
 		let countAll = try await vote.count()
 		let countWo0 = try await vote.count(force: false, excluding: [opt[0]])
@@ -38,8 +41,8 @@ final class AltVoteKitTests: XCTestCase {
 
 		
 		//And now with Sofus
-		await vote.addEligigbleVoters("Sofus")
-		await vote.addVotes(SingleVote("Sofus", rankings: opt))
+		await vote.addEligigbleVoters(voterSofus)
+		await vote.addVotes(SingleVote(voterSofus, rankings: opt))
 		
 		let countAllWS = try await vote.count()
 		let countWo0WS = try await vote.count(force: false, excluding: [opt[0]])

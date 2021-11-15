@@ -67,7 +67,7 @@ extension AltVote{
 	/// - Parameter votes: The votes to set
 	/// - Returns: Whether all userIDs were unique
 	@discardableResult public func setVotes(_ votes: [SingleVote]) async -> Bool{
-		guard votes.map(\.userID).nonUniques.isEmpty else {
+		guard votes.map(\.user).nonUniques.isEmpty else {
 			return false
 		}
 		
@@ -79,8 +79,8 @@ extension AltVote{
 	/// - Parameter vote: The vote to set
 	/// - Returns: Whether all userIDs were unique
 	@discardableResult public func addVotes(_ vote: SingleVote) async -> Bool{
-		let user = vote.userID
-		if self.votes.contains(where: {$0.userID == user}){
+		let user = vote.user
+		if self.votes.contains(where: {$0.user == user}){
 			return false
 		}
 		
@@ -144,7 +144,7 @@ extension AltVote{
 	/// Checks if a given userID already has voted in this vote
 	public func hasUserVoted(_ user: Constituent) async -> Bool{
 		votes.contains(where: {
-			$0.userID == user
+			$0.user == user
 		})
 	}
 }
@@ -199,7 +199,7 @@ extension AltVote{
 		
 		
 		for voter in votes{
-			csv += "\n 01/01/2001 00.00.01, \(voter.userID)"
+			csv += "\n 01/01/2001 00.00.01, \(voter.user.identifier)"
 			
 			var obj = [String: Int]()
 			for j in 0..<voter.rankings.count{

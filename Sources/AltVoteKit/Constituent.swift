@@ -4,7 +4,7 @@ public struct Constituent: Hashable, Codable, Sendable{
 	public var identifier: String
 	public var id: UUID
 	
-	init(name: String? = nil, identifier: String){
+	public init(name: String? = nil, identifier: String){
 		self.name = name
 		self.identifier = identifier
 		self.id = UUID()
