@@ -34,7 +34,7 @@ extension AltVote{
 		let excludingVotes = votes.compactMap { vote -> SingleVote? in
 			var vote = vote
 			vote.rankings = vote.rankings.filter { option in
-				//Keeps options that is not in excluding
+				//Filters out options that is in the excluding array
 				!excluding.contains(option)
 			}
 			//If all votes have been excluded this vote will not continue into 'excludingVotes'
@@ -183,4 +183,40 @@ extension AltVote{
 			$0.rankings.map(\.name)
 		}
 	}
+}
+
+
+extension AltVote{
+	//Format: https://github.com/vstenby/AlternativeVote/blob/main/KABSDemo.csv
+	public func toCSV() -> String {
+		
+		var csv = "Tidsstempel,Studienummer"
+		
+		let allOptionsSortedByName = options.sorted(by: {$0.name < $1.name})
+		for i in allOptionsSortedByName {
+			csv += ",Stemmeseddel [\(i.name)]"
+		}
+		
+		
+		for voter in votes{
+			csv += "\n 01/01/2001 00.00.01, \(voter.userID)"
+			
+			var obj = [String: Int]()
+			for j in 0..<voter.rankings.count{
+				obj[voter.rankings[j].name] = j + 1
+			}
+			
+			for i in allOptionsSortedByName{
+				if let priority = obj[i.name]{
+					csv += ",\(priority).0"
+				} else {
+					csv += ","
+				}
+			}
+			
+		}
+		
+		return csv
+	}
+
 }
