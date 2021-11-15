@@ -1,8 +1,14 @@
 import Foundation
 
-extension Hashable where Self: AnyObject {
+extension Hashable where Self: Actor {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(ObjectIdentifier(self))
+	}
+	
+	nonisolated public var hashValue: Int {
+		var hasher = Hasher()
+		self.hash(into: &hasher)
+		return hasher.finalize()
 	}
 }
 
