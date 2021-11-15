@@ -1,5 +1,5 @@
 extension AltVote{
-	public func findWinner(force: Bool) async throws -> [VoteOption]?{
+	public func findWinner(force: Bool) async throws -> [VoteOption]{
 		var winner: [AltVoteKit.VoteOption]? = nil
 		
 		var excluded = Set<VoteOption>()
@@ -84,7 +84,7 @@ extension AltVote{
 				}
 			}
 		}
-		return winner
+		return winner!
 	}
 }
 
