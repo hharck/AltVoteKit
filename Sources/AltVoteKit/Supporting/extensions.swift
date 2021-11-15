@@ -1,3 +1,5 @@
+import Foundation
+
 extension Hashable where Self: AnyObject {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(ObjectIdentifier(self))
@@ -9,3 +11,5 @@ extension Equatable where Self: AnyObject {
 		return lhs === rhs
 	}
 }
+
+extension UUID: @unchecked Sendable{}

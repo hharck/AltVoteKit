@@ -1,4 +1,4 @@
-public protocol TieBreakable{
+public protocol TieBreakable: Sendable{
 	
 	/// The name of the TieBreaker
 	var name: String {get}

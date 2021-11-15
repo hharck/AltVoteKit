@@ -1,4 +1,4 @@
-public protocol Validateable{
+public protocol Validateable: Sendable{
 	func validate(_ votes: [SingleVote], _ eligibleUsers: Set<UserID>, allOptions: [Option]) -> ValidationResult
 	
 	/// The id of the validator

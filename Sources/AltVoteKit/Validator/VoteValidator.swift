@@ -1,5 +1,5 @@
 public struct VoteValidator: Validateable{
-	public typealias closureType = ([SingleVote], _ eligibleUsers: Set<UserID>, _ options: [Option]) -> [SingleVote]
+	public typealias closureType = @Sendable ([SingleVote], _ eligibleUsers: Set<UserID>, _ options: [Option]) -> [SingleVote]
 	
 	/// The id of the validator
 	public let id: String
@@ -8,7 +8,7 @@ public struct VoteValidator: Validateable{
 	public let name: String
 	
 	/// Generates an error string for why a vote wasn't validated
-	private let offenseText: (_ for: SingleVote, _ options: [Option]) -> String
+	private let offenseText: @Sendable (_ for: SingleVote, _ options: [Option]) -> String
 	
 	/// Returns every vote in violation of the validator
 	private var closure: closureType
@@ -25,7 +25,7 @@ public struct VoteValidator: Validateable{
 		return ValidationResult(name: self.id, errors: offenseTexts)
 	}
 
-	public init(id: String, name: String, offenseText: @escaping (_ for: SingleVote, _ options: [Option]) -> String, closure: @escaping closureType){
+	public init(id: String, name: String, offenseText: @Sendable @escaping (_ for: SingleVote, _ options: [Option]) -> String, closure: @escaping closureType){
 		self.id = id
 		self.name = name
 		self.offenseText = offenseText

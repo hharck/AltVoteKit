@@ -73,11 +73,17 @@ final class AltVoteKitTests: XCTestCase {
 		XCTAssertEqual([
 			opt[1]:2
 		], countWo02WS)
+	
+		
+		let winner = try await vote.findWinner(force: false)!
+		XCTAssertEqual(Set(winner), [opt[0], opt[2]])
+		print(winner, [opt[0], opt[2]])
 		
 		
 		await vote.addVotes(SingleVote("NSA spy", rankings: opt))
 		let failedCount = try? await vote.count()
 		XCTAssertEqual(nil, failedCount)
+		
 
     }
 }

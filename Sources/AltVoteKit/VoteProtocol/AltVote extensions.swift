@@ -8,7 +8,6 @@ extension AltVote{
 		guard !votes.isEmpty else {
 			return [ValidationResult(name: "No votes cast", errors: [])]
 		}
-		print(votes.count)
 		let allValidators = requiredValidators + validators
 		return allValidators.map{ validator -> ValidationResult in
 			validator.validate(votes, eligibleVoters, allOptions: options)
@@ -46,9 +45,11 @@ extension AltVote{
 		}
 		
 		//Sets zero votes for all allowed options
-		let dict = Set(options).subtracting(excluding).reduce(into: [Option: UInt]()) { partialResult, option in
-			partialResult[option] = 0
-		}
+		let dict = Set(options)
+			.subtracting(excluding)
+			.reduce(into: [Option: UInt]()) { partialResult, option in
+				partialResult[option] = 0
+			}
 		
 		//Counts the number of highest priority votes for each candidate
 		return excludingVotes.reduce(into: dict) { partialResult, vote in
@@ -145,5 +146,41 @@ extension AltVote{
 		votes.contains(where: {
 			$0.userID == user
 		})
+	}
+}
+
+
+// Debug counts
+extension AltVote{
+	// Finds the number of votes for each priority for each option
+	public func debugCount() async -> [Option: [Int:Int]]{
+		// priority: no. of votes for that priority
+		var d = [Int: Int]()
+		//Sets all priorities to zero votes
+		for i in 1...options.count{
+			d[i] = 0
+		}
+		
+		// Creates a list of options and the number of votes on each priority
+		// 		[voting option: [the rank : number of votes for this rank]
+		var priorities: [Option: [Int:Int]] = options.reduce(into: [Option: [Int:Int]]()) { partialResult, option in
+			partialResult[option] = d
+		}
+		
+		votes.forEach { vote in
+			for i in 0..<vote.rankings.count{
+				let option = vote.rankings[i]
+				priorities[option]![i+1]! += 1
+			}
+		}
+		
+		return priorities
+		
+	}
+	
+	public func debugCount2() async -> [[String]]{
+		votes.map{
+			$0.rankings.map(\.name)
+		}
 	}
 }
