@@ -75,7 +75,7 @@ final class AltVoteKitTests: XCTestCase {
 		], countWo02WS)
 	
 		
-		let winner = try await vote.findWinner(force: false)!
+		let winner = try await vote.findWinner(force: false)
 		XCTAssertEqual(Set(winner), [opt[0], opt[2]])
 		print(winner, [opt[0], opt[2]])
 		
