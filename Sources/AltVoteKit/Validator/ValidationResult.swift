@@ -4,10 +4,10 @@ public struct ValidationResult: Codable {
 		self.errors = errors
 	}
 	/// The name of the validator responsible for giving this set of errors
-	let name: String
+	public let name: String
 	
 	/// The errors found doing validation of a single validationrule
-	let errors: [String]
+	public let errors: [String]
 	
 }
 
@@ -24,7 +24,7 @@ extension ValidationResult: Sequence{
 
 extension Array where Element == ValidationResult{
 	//Sums the number of errors
-	var countErrors: Int{
+	public var countErrors: Int{
 		self.map{$0.count()}.reduce(0, +)
 	}
 }
