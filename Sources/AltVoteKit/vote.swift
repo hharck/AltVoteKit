@@ -2,7 +2,7 @@ import Foundation
 public actor Vote: AltVote, Hashable{
 	
 	
-	public init(id: UUID, name: String, options: [VoteOption], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable]) {
+	public init(id: UUID, name: String, options: [VoteOption], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<Constituent>, tieBreakingRules: [TieBreakable]) {
 		self.id = id
 		self.name = name
 		self.options = options
@@ -17,7 +17,7 @@ public actor Vote: AltVote, Hashable{
 	public var options: [VoteOption]
 	public var votes: [SingleVote]
 	public var validators: [Validateable]
-	public var eligibleVoters: Set<UserID>
+	public var eligibleVoters: Set<Constituent>
 	public var tieBreakingRules: [TieBreakable]
 	public var customData: [String : String] = [:]
 

@@ -3,7 +3,7 @@ extension Validateable{
 	internal static var oneVotePerUser: VoteValidator {
 		VoteValidator(id: "OneVotePerUser", name: "One vote per. user", offenseText: {"\($0.userID) voted multiple times"}) { votes, _  in
 			
-			var allUnique = [UserID]()
+			var allUnique = [Constituent]()
 			let allOffendingIDs = votes.compactMap{ vote -> SingleVote? in
 				if allUnique.contains(vote.userID){
 					return vote

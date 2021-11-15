@@ -107,17 +107,17 @@ extension AltVote{
 	 
 	//MARK: Voters
 	/// Sets the eligible voters property, overriding any existing information
-	public func setEligigbleVoters(_ voters: Set<UserID>) async{
+	public func setEligigbleVoters(_ voters: Set<Constituent>) async{
 		self.eligibleVoters = voters
 	}
 	
 	/// Adds an eligible voter
-	public func addEligigbleVoters(_ voter: UserID) async{
+	public func addEligigbleVoters(_ voter: Constituent) async{
 		self.eligibleVoters.insert(voter)
 	}
 	
 	/// Adds multiple eligible voters
-	public func addEligigbleVoters(_ voters: Set<UserID>) async{
+	public func addEligigbleVoters(_ voters: Set<Constituent>) async{
 		self.eligibleVoters.formUnion(voters)
 	}
 	
@@ -142,7 +142,7 @@ extension AltVote{
 	
 	
 	/// Checks if a given userID already has voted in this vote
-	public func hasUserVoted(_ user: UserID) async -> Bool{
+	public func hasUserVoted(_ user: Constituent) async -> Bool{
 		votes.contains(where: {
 			$0.userID == user
 		})
@@ -150,7 +150,7 @@ extension AltVote{
 }
 
 
-// Debug counts
+// Debug data
 extension AltVote{
 	// Finds the number of votes for each priority for each option
 	public func debugCount() async -> [VoteOption: [Int:Int]]{
@@ -219,4 +219,15 @@ extension AltVote{
 		return csv
 	}
 
+	public func constituentsToCSV() -> String{
+		var csv = "Navn, Studienummer"
+
+		for voter in self.eligibleVoters{
+			csv += "\n"
+			
+			let name = voter.name ?? voter.identifier
+			csv += "\(name), \(voter.identifier)"
+		}
+		return csv
+	}
 }

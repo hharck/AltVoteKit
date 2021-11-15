@@ -1,5 +1,4 @@
 import Foundation
-public typealias UserID = String
 
 public protocol AltVote: Actor, Hashable{
 	func validate() -> [VoteValidationResult]
@@ -21,7 +20,7 @@ public protocol AltVote: Actor, Hashable{
 	var validators: [Validateable] {get set}
 	
 	/// A set of users who are expected to vote
-	var eligibleVoters: Set<UserID> {get set}
+	var eligibleVoters: Set<Constituent> {get set}
 	
 	/// Rules for breaking a tie, applied in the order given.
 	var tieBreakingRules: [TieBreakable] {get set}
@@ -30,5 +29,5 @@ public protocol AltVote: Actor, Hashable{
 	var customData: [String: String] {get set}
 
 	
-	init(id: UUID, name: String, options: [VoteOption], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
+	init(id: UUID, name: String, options: [VoteOption], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<Constituent>, tieBreakingRules: [TieBreakable])
 }
