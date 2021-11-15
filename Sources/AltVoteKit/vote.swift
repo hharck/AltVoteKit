@@ -1,5 +1,5 @@
 import Foundation
-public actor Vote: AltVote{
+public actor Vote: AltVote, Hashable{
 	
 	
 	public init(id: UUID, name: String, options: [VoteOption], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable]) {
