@@ -34,8 +34,8 @@ extension Validateable{
 	}
 	
 	/// Will not validate if a user not on the allowed users list has voted
-	public static var noForeignVotes: VoteValidator {
-		VoteValidator(id: "NoForeignVotes", name: "No foreign votes", offenseText: {"\($0.user.identifier) has voted enough they aren't on the list of allowed users"}) { votes, eligibleUsers in
+	public static var onlyVerifiedVotes: VoteValidator {
+		VoteValidator(id: "onlyVerifiedVotes", name: "Only verified votes", offenseText: {"\($0.user.identifier) has voted even though they aren't on the list of verified users"}) { votes, eligibleUsers in
 			
 			return votes.compactMap { vote in
 				if eligibleUsers.contains(vote.user){
@@ -66,5 +66,5 @@ extension Validateable{
 			votes.filter {$0.rankings.isEmpty}
 		}
 	}
-	public static var defaultValidators: [Validateable] {[everyoneHasVoted, noForeignVotes, preferenceForAllCandidates, noBlankVotes]}
+	public static var defaultValidators: [Validateable] {[everyoneHasVoted, onlyVerifiedVotes, preferenceForAllCandidates, noBlankVotes]}
 }

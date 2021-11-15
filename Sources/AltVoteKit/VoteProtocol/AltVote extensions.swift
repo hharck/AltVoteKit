@@ -88,6 +88,12 @@ extension AltVote{
 		return true
 	}
 	
+	public func resetVoteForUser(_ user: Constituent){
+		self.votes.removeAll(where: {vote in
+			vote.user == user
+		})
+	}
+	
 	/* These may break the expectations of some validators
 	/// Defines the possible options for the votes; may override old votes
 	public func setOptions(_ options: [Option]) async{
