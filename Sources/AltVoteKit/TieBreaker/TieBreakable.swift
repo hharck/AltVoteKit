@@ -14,7 +14,7 @@ extension TieBreakable{
 }
 
 public protocol normalTieBreakable: TieBreakable{
-	func breakTie(votes: [SingleVote], options: [Option], optionsLeft: Int) -> [Option : TieBreak]
+	func breakTie(votes: [SingleVote], options: [VoteOption], optionsLeft: Int) -> [VoteOption : TieBreak]
 }
 
 public enum TieBreak{

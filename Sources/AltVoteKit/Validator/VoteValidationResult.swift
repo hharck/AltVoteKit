@@ -1,4 +1,4 @@
-public struct ValidationResult: Codable {
+public struct VoteValidationResult: Codable {
 	internal init(name: String, errors: [String]) {
 		self.name = name
 		self.errors = errors
@@ -12,7 +12,7 @@ public struct ValidationResult: Codable {
 }
 
 // Turns ValidationResult into a Sequence
-extension ValidationResult: Sequence{
+extension VoteValidationResult: Sequence{
 	public func makeIterator() -> IndexingIterator<[String]>{
 		return self.errors.makeIterator()
 	}
@@ -22,7 +22,7 @@ extension ValidationResult: Sequence{
 	}
 }
 
-extension Array where Element == ValidationResult{
+extension Array where Element == VoteValidationResult{
 	//Sums the number of errors
 	public var countErrors: Int{
 		self.map{$0.count()}.reduce(0, +)
@@ -30,5 +30,5 @@ extension Array where Element == ValidationResult{
 }
 
 // Makes it possible to throw an array of Validation results
-extension ValidationResult: Sendable{}
-extension Array: Error where Element == ValidationResult{}
+extension VoteValidationResult: Sendable{}
+extension Array: Error where Element == VoteValidationResult{}

@@ -4,12 +4,12 @@ extension AltVote{
 		[VoteValidator.oneVotePerUser]
 	}
 	/// Validates that the entire vote follows the assertings put in the validators array
-	public func validate() -> [ValidationResult] {
+	public func validate() -> [VoteValidationResult] {
 		guard !votes.isEmpty else {
-			return [ValidationResult(name: "No votes cast", errors: [])]
+			return [VoteValidationResult(name: "No votes cast", errors: [])]
 		}
 		let allValidators = requiredValidators + validators
-		return allValidators.map{ validator -> ValidationResult in
+		return allValidators.map{ validator -> VoteValidationResult in
 			validator.validate(votes, eligibleVoters, allOptions: options)
 		}
 	}
@@ -19,7 +19,7 @@ extension AltVote{
 	///   - force: Wether to count without regard to validations
 	///   - excluding: The options not relevant to this count
 	/// - Returns: The number of votes for each option
-	public func count(force: Bool = false, excluding: [Option] = []) async throws -> [Option: UInt]{
+	public func count(force: Bool = false, excluding: [VoteOption] = []) async throws -> [VoteOption: UInt]{
 		// Checks that all votes are valid
 		if !force{
 			let validationResults = self.validate()
@@ -47,7 +47,7 @@ extension AltVote{
 		//Sets zero votes for all allowed options
 		let dict = Set(options)
 			.subtracting(excluding)
-			.reduce(into: [Option: UInt]()) { partialResult, option in
+			.reduce(into: [VoteOption: UInt]()) { partialResult, option in
 				partialResult[option] = 0
 			}
 		
@@ -136,7 +136,7 @@ extension AltVote{
 	
 	//MARK: Options
 	/// Retrieves an array of options
-	public func getAllOptions() async -> [Option]{
+	public func getAllOptions() async -> [VoteOption]{
 		self.options
 	}
 	
@@ -153,7 +153,7 @@ extension AltVote{
 // Debug counts
 extension AltVote{
 	// Finds the number of votes for each priority for each option
-	public func debugCount() async -> [Option: [Int:Int]]{
+	public func debugCount() async -> [VoteOption: [Int:Int]]{
 		// priority: no. of votes for that priority
 		var d = [Int: Int]()
 		//Sets all priorities to zero votes
@@ -163,7 +163,7 @@ extension AltVote{
 		
 		// Creates a list of options and the number of votes on each priority
 		// 		[voting option: [the rank : number of votes for this rank]
-		var priorities: [Option: [Int:Int]] = options.reduce(into: [Option: [Int:Int]]()) { partialResult, option in
+		var priorities: [VoteOption: [Int:Int]] = options.reduce(into: [VoteOption: [Int:Int]]()) { partialResult, option in
 			partialResult[option] = d
 		}
 		

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Defines a candidate in vote
-public struct Option: Sendable, Hashable, Equatable, Codable{
+public struct VoteOption: Sendable, Hashable, Equatable, Codable{
 	public let id: UUID
 	public var name: String
 	public var subTitle: String?
@@ -16,7 +16,7 @@ public struct Option: Sendable, Hashable, Equatable, Codable{
 }
 
 //Adds support for creating defining options as a simple array of strings; mostly used for testing purposes
-extension Option: ExpressibleByStringLiteral{
+extension VoteOption: ExpressibleByStringLiteral{
 	public init(stringLiteral value: String) {
 		self.init(value)
 	}

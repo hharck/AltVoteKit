@@ -10,7 +10,7 @@ public struct UserInteractiveTieBreak: TieBreakable{
 	
 	public var id: String
 	
-	public func breakTie(votes: [SingleVote], options: [Option], optionsLeft: Int) -> [String]{
+	public func breakTie(votes: [SingleVote], options: [VoteOption], optionsLeft: Int) -> [String]{
 		fatalError("User interactive tie breakers hasn't been implemented")
 	}
 	

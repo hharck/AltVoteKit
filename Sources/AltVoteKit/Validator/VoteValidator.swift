@@ -1,5 +1,5 @@
 public struct VoteValidator: Validateable{
-	public typealias closureType = @Sendable ([SingleVote], _ eligibleUsers: Set<UserID>, _ options: [Option]) -> [SingleVote]
+	public typealias closureType = @Sendable ([SingleVote], _ eligibleUsers: Set<UserID>, _ options: [VoteOption]) -> [SingleVote]
 	
 	/// The id of the validator
 	public let id: String
@@ -8,7 +8,7 @@ public struct VoteValidator: Validateable{
 	public let name: String
 	
 	/// Generates an error string for why a vote wasn't validated
-	private let offenseText: @Sendable (_ for: SingleVote, _ options: [Option]) -> String
+	private let offenseText: @Sendable (_ for: SingleVote, _ options: [VoteOption]) -> String
 	
 	/// Returns every vote in violation of the validator
 	private var closure: closureType
@@ -19,13 +19,13 @@ public struct VoteValidator: Validateable{
 	///   - votes: The votes to validate
 	///   - eligibleUsers: The users allowed to vote
 	/// - Returns: An array of error strings. Can be used along with \.name when showing the errors on the frontend
-	public func validate(_ votes: [SingleVote], _ eligibleUsers: Set<UserID>, allOptions: [Option]) -> ValidationResult{
+	public func validate(_ votes: [SingleVote], _ eligibleUsers: Set<UserID>, allOptions: [VoteOption]) -> VoteValidationResult{
 		let offenders = closure(votes, eligibleUsers, allOptions)
 		let offenseTexts = offenders.map{offenseText($0, [])}
-		return ValidationResult(name: self.id, errors: offenseTexts)
+		return VoteValidationResult(name: self.id, errors: offenseTexts)
 	}
 
-	public init(id: String, name: String, offenseText: @Sendable @escaping (_ for: SingleVote, _ options: [Option]) -> String, closure: @escaping closureType){
+	public init(id: String, name: String, offenseText: @Sendable @escaping (_ for: SingleVote, _ options: [VoteOption]) -> String, closure: @escaping closureType){
 		self.id = id
 		self.name = name
 		self.offenseText = offenseText

@@ -2,9 +2,9 @@
 public struct SingleVote: Sendable, Hashable, Codable{
 	public var userID: UserID
 	
-	public var rankings: [Option]
+	public var rankings: [VoteOption]
 	
-	public init(_ userID: UserID, rankings: [Option]){
+	public init(_ userID: UserID, rankings: [VoteOption]){
 		self.userID = userID
 		self.rankings = rankings
 	}

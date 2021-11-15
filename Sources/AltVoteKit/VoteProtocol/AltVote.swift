@@ -2,8 +2,8 @@ import Foundation
 public typealias UserID = String
 
 public protocol AltVote: Actor, Hashable{
-	func validate() -> [ValidationResult]
-	func count(force: Bool, excluding: [Option]) async throws -> [Option: UInt]
+	func validate() -> [VoteValidationResult]
+	func count(force: Bool, excluding: [VoteOption]) async throws -> [VoteOption: UInt]
 	
 	/// A unique identifier for the vote
 	var id: UUID {get}
@@ -12,7 +12,7 @@ public protocol AltVote: Actor, Hashable{
 	var name: String {get}
 	
 	/// The options available in this vote
-	var options: [Option] {get set}
+	var options: [VoteOption] {get set}
 	
 	/// The votes cast
 	var votes: [SingleVote] {get set}
@@ -30,5 +30,5 @@ public protocol AltVote: Actor, Hashable{
 	var customData: [String: String] {get set}
 
 	
-	init(id: UUID, name: String, options: [Option], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
+	init(id: UUID, name: String, options: [VoteOption], votes: [SingleVote], validators: [Validateable], eligibleVoters: Set<UserID>, tieBreakingRules: [TieBreakable])
 }

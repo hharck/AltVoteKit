@@ -3,7 +3,7 @@ import XCTest
 
 final class AltVoteKitTests: XCTestCase {
     func testExample() async throws {
-		let opt: [Option] = ["Person 1", "Person 2", "Person 3"]
+		let opt: [VoteOption] = ["Person 1", "Person 2", "Person 3"]
 		
 		let vote = Vote(id: UUID(), name: "", options: opt, votes: [SingleVote("Hans", rankings: opt.reversed())], validators: VoteValidator.defaultValidators, eligibleVoters: ["Hans"], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom])
 		

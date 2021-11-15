@@ -1,11 +1,11 @@
 extension AltVote{
-	public func findWinner(force: Bool) async throws -> [Option]?{
-		var winner: [AltVoteKit.Option]? = nil
+	public func findWinner(force: Bool) async throws -> [VoteOption]?{
+		var winner: [AltVoteKit.VoteOption]? = nil
 		
-		var excluded = Set<Option>()
+		var excluded = Set<VoteOption>()
 		let allOptions = Set(options)
 		
-		var lastCount: [Option: UInt]? = nil
+		var lastCount: [VoteOption: UInt]? = nil
 		
 		while winner == nil{
 			if excluded == allOptions{
@@ -43,7 +43,7 @@ extension AltVote{
 				let lowestVoteCount = sortedList.last!.votes
 				
 				// All the options tied for last
-				var bottom: [AltVoteKit.Option] = []
+				var bottom: [AltVoteKit.VoteOption] = []
 				for i in sortedList.reversed() {
 					if i.votes != lowestVoteCount {
 						break
@@ -66,7 +66,7 @@ extension AltVote{
 						}
 						let tbResult = tb.breakTie(votes: votes, options: options, optionsLeft: allOptions.subtracting(excluded).count)
 						
-						let toRemove = tbResult.compactMap{ res -> AltVoteKit.Option? in
+						let toRemove = tbResult.compactMap{ res -> AltVoteKit.VoteOption? in
 							if res.value == .remove{
 								return res.key
 							} else{

@@ -3,7 +3,7 @@ extension TieBreakable{
 	/// Removes a random option
 	public static var removeRandom: TieBreaker {
 		TieBreaker(name: "Remove random", id: "removeRandom") { _, options, _  in
-			var dict = options.reduce(into: [Option: TieBreak]()) {
+			var dict = options.reduce(into: [VoteOption: TieBreak]()) {
 				$0[$1] = TieBreak.keep
 			}
 			
@@ -14,7 +14,7 @@ extension TieBreakable{
 	/// Keeps a random option
 	public static var keepRandom: TieBreaker {
 		TieBreaker(name: "Keep random", id: "keepRandom") { _, options, _  in
-			var dict = options.reduce(into: [Option: TieBreak]()) {
+			var dict = options.reduce(into: [VoteOption: TieBreak]()) {
 				$0[$1] = TieBreak.remove
 			}
 			dict[dict.keys.randomElement()!] = TieBreak.keep
@@ -27,13 +27,13 @@ extension TieBreakable{
 	public static var dropAll: TieBreaker {
 		TieBreaker(name: "Drop all unless they're last", id: "dropAll") { _, options, numberLeft in
 			guard numberLeft != options.count else {
-				return options.reduce(into: [Option: TieBreak]()) {
+				return options.reduce(into: [VoteOption: TieBreak]()) {
 					//Keeps all
 					$0[$1] = TieBreak.keep
 				}
 			}
 			
-			return options.reduce(into: [Option: TieBreak]()) {
+			return options.reduce(into: [VoteOption: TieBreak]()) {
 				$0[$1] = TieBreak.remove
 			}
 			

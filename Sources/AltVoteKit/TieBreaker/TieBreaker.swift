@@ -1,5 +1,5 @@
 public struct TieBreaker: normalTieBreakable{
-	internal init(name: String, id: String, closure: @Sendable @escaping ([SingleVote], [Option], Int) -> [Option : TieBreak]) {
+	internal init(name: String, id: String, closure: @Sendable @escaping ([SingleVote], [VoteOption], Int) -> [VoteOption : TieBreak]) {
 		self.name = name
 		self.id = id
 		self.closure = closure
@@ -13,7 +13,7 @@ public struct TieBreaker: normalTieBreakable{
 	public let id: String
 	
 	/// Returns every vote in violation of the validator
-	private var closure: @Sendable (_ votes: [SingleVote], _ options: [Option], _ optionsLeft: Int) -> [Option : TieBreak]
+	private var closure: @Sendable (_ votes: [SingleVote], _ options: [VoteOption], _ optionsLeft: Int) -> [VoteOption : TieBreak]
 	
 	
 	/// Run the tie breaker
@@ -22,7 +22,7 @@ public struct TieBreaker: normalTieBreakable{
 	///   - options: The options that are in a tie
 	///   - optionsLeft: The total number of options left
 	/// - Returns: Options and their status
-	public func breakTie(votes: [SingleVote], options: [Option], optionsLeft: Int) -> [Option : TieBreak] {
+	public func breakTie(votes: [SingleVote], options: [VoteOption], optionsLeft: Int) -> [VoteOption : TieBreak] {
 		assert(options.count <= optionsLeft)
 		if options.isEmpty{
 			return [:]
