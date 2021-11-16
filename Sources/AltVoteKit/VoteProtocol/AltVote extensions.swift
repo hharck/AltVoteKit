@@ -236,7 +236,7 @@ extension AltVote{
 			csv += "\n"
 			
 			let name = voter.name ?? voter.identifier
-			csv += "\(name), \(voter.identifier)"
+			csv += "\(name),\(voter.identifier)"
 		}
 		return csv
 	}
