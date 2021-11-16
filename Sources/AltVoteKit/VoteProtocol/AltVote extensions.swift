@@ -79,8 +79,8 @@ extension AltVote{
 	/// - Parameter vote: The vote to set
 	/// - Returns: Whether all userIDs were unique
 	@discardableResult public func addVotes(_ vote: SingleVote) async -> Bool{
-		let user = vote.user
-		if self.votes.contains(where: {$0.user.identifier == user.identifier}){
+		let user = vote.user.identifier
+		if self.votes.contains(where: {$0.user.identifier == user}){
 			return false
 		}
 		

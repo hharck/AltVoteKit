@@ -1,8 +1,8 @@
 extension AltVote{
-	public func findWinner(force: Bool) async throws -> [VoteOption]{
+	public func findWinner(force: Bool, excluding: Set<VoteOption> = []) async throws -> [VoteOption]{
 		var winner: [VoteOption]? = nil
 		
-		var excluded = Set<VoteOption>()
+		var excluded = excluding
 		let allOptions = Set(options)
 		
 		var lastCount: [VoteOption: UInt]? = nil
