@@ -19,7 +19,7 @@ extension Validateable{
 	
 	/// Will not validate untill everyone on the allowed voters list has votes
 	public static var everyoneHasVoted: VoteValidator {
-		VoteValidator(id: "EveryoneVoted", name: "Everyone has voted", offenseText: {"\($0.user.identifier) hasn't voted"}) { votes, eligibleUsers in
+		VoteValidator(id: "EveryoneVoted", name: "All verified users are required to vote", offenseText: {"\($0.user.identifier) hasn't voted"}) { votes, eligibleUsers in
 			let userIDs = votes.map(\.user)
 			let offenders = eligibleUsers.compactMap{ user -> SingleVote? in
 				if userIDs.contains(user){

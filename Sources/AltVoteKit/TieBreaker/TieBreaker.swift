@@ -28,8 +28,15 @@ public struct TieBreaker: normalTieBreakable{
 			return [:]
 		} else {
 			let result = closure(votes, options, optionsLeft)
-			assert(Set(result.keys) == Set(options), "Tie breaker not returning a value for every option")
+
+			//Only checked during debug builds
+			assert(Set(result.keys) == Set(options), "Tiebreaker not returning a value for every option")
 			return result
 		}
 	}
+	enum TieBreakingError: Error{
+		case noTBwasAbleToBreakTie
+	}
 }
+
+

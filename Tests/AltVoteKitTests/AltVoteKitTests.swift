@@ -89,4 +89,23 @@ final class AltVoteKitTests: XCTestCase {
 		
 
     }
+	
+	
+	
+	func testBug() async throws{
+		let options: [VoteOption] = ["1","2","3","4","5","6","7","8","9","10"]
+		
+		let votes: [SingleVote] = [.init("a", rankings: options),
+								   .init("b", rankings: options),
+								   .init("c", rankings: options.reversed()),
+								   .init("d", rankings: [5,4,3,2,1,10,9,8,7,6].map{options[$0 - 1]})
+		]
+		
+		
+		let vote = Vote(id: UUID(), name: "", options: options, votes: votes, validators: [ VoteValidator.noBlankVotes,VoteValidator.everyoneHasVoted,VoteValidator.oneVotePerUser], eligibleVoters: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom])
+
+		let nameOfWinner = try await vote.findWinner(force: false)[0].name
+		XCTAssertEqual(nameOfWinner, "1")
+		
+	}
 }
