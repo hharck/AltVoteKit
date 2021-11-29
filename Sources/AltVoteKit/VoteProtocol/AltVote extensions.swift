@@ -10,7 +10,7 @@ extension AltVote{
 		}
 		let allValidators = requiredValidators + validators
 		return allValidators.map{ validator -> VoteValidationResult in
-			validator.validate(votes, eligibleVoters, allOptions: options)
+			validator.validate(votes, constituents, allOptions: options)
 		}
 	}
 	
@@ -37,14 +37,14 @@ extension AltVote{
 				//Filters out options that is in the excluding array
 				!excluding.contains(option)
 			}
-			//If all votes have been excluded this vote will not continue into 'excludingVotes'
+			//If all votes have been excluded this vote will not be put into 'excludingVotes'
 			guard !vote.rankings.isEmpty else {
 				return nil
 			}
 			return vote
 		}
 		
-		//Sets zero votes for all allowed options
+		//Sets zero votes cast for all, allowed, options
 		let dict = Set(options)
 			.subtracting(excluding)
 			.reduce(into: [VoteOption: UInt]()) { partialResult, option in
@@ -67,7 +67,7 @@ extension AltVote{
 	/// - Parameter votes: The votes to set
 	/// - Returns: Whether all userIDs were unique
 	@discardableResult public func setVotes(_ votes: [SingleVote]) async -> Bool{
-		guard votes.map(\.user.identifier).nonUniques.isEmpty else {
+		guard votes.map(\.constituent.identifier).nonUniques.isEmpty else {
 			return false
 		}
 		
@@ -78,9 +78,8 @@ extension AltVote{
 	/// Adds a vote to the list of votes
 	/// - Parameter vote: The vote to set
 	/// - Returns: Whether all userIDs were unique
-	@discardableResult public func addVotes(_ vote: SingleVote) async -> Bool{
-		let user = vote.user.identifier
-		if self.votes.contains(where: {$0.user.identifier == user}){
+	@discardableResult public func addVote(_ vote: SingleVote) -> Bool{
+		if hasConstituentVoted(vote.constituent){
 			return false
 		}
 		
@@ -89,12 +88,12 @@ extension AltVote{
 	}
 	
 	public func resetVoteForUser(_ user: Constituent){
-		resetVoteForUser(user.id)
+		resetVoteForUser(user.identifier)
 	}
 	
-	public func resetVoteForUser(_ id: UUID){
+	public func resetVoteForUser(_ id: ConstituentID){
 		self.votes.removeAll(where: {vote in
-			vote.user.id == id
+			vote.constituent.identifier == id
 		})
 	}
 	
@@ -116,19 +115,23 @@ extension AltVote{
 	*/
 	 
 	//MARK: Voters
-	/// Sets the eligible voters property, overriding any existing information
-	public func setEligigbleVoters(_ voters: Set<Constituent>) async{
-		self.eligibleVoters = voters
+	/// Sets the constituents property, overriding any existing information
+	public func setConstituents(_ voters: Set<Constituent>) async{
+		self.constituents = voters
 	}
 	
-	/// Adds an eligible voter
-	public func addEligigbleVoters(_ voter: Constituent) async{
-		self.eligibleVoters.insert(voter)
+	/// Adds a constituents and replaced any former ghosts if they exists
+	public func addConstituents(_ voter: Constituent) async{
+		if let dobbelganger = self.constituents.first(where: {$0.identifier == voter.identifier}){
+			self.constituents.remove(dobbelganger)
+		}
+		
+		self.constituents.insert(voter)
 	}
 	
-	/// Adds multiple eligible voters
-	public func addEligigbleVoters(_ voters: Set<Constituent>) async{
-		self.eligibleVoters.formUnion(voters)
+	/// Adds multiple  constituents
+	public func addConstituents(_ constituents: Set<Constituent>) async{
+		self.constituents.formUnion(constituents)
 	}
 	
 	//MARK: Custom data
@@ -144,17 +147,20 @@ extension AltVote{
 		self.customData[key]
 	}
 	
-	//MARK: Options
 	/// Retrieves an array of options
 	public func getAllOptions() async -> [VoteOption]{
 		self.options
 	}
 	
+	/// Checks if a given constituent already has voted in this vote
+	public func hasConstituentVoted(_ user: Constituent) -> Bool{
+		hasConstituentVoted(user.identifier)
+	}
 	
-	/// Checks if a given userID already has voted in this vote
-	public func hasUserVoted(_ user: Constituent) async -> Bool{
-		votes.contains(where: {
-			$0.user == user
+	/// Checks if a given constituentID already has voted in this vote
+	public func hasConstituentVoted(_ identifier: ConstituentID) -> Bool{
+		self.votes.contains(where: {
+			$0.constituent.identifier == identifier
 		})
 	}
 }
@@ -195,7 +201,7 @@ extension AltVote{
 	}
 }
 
-
+// CSV export
 extension AltVote{
 	//Format: https://github.com/vstenby/AlternativeVote/blob/main/KABSDemo.csv
 	public func toCSV() -> String {
@@ -209,7 +215,7 @@ extension AltVote{
 		
 		
 		for voter in votes{
-			csv += "\n 01/01/2001 00.00.01, \(voter.user.identifier)"
+			csv += "\n 01/01/2001 00.00.01, \(voter.constituent.identifier)"
 			
 			var obj = [String: Int]()
 			for j in 0..<voter.rankings.count{
@@ -229,10 +235,12 @@ extension AltVote{
 		return csv
 	}
 
-	public func constituentsToCSV() -> String{
+	public static func constituentsToCSV(_ voters: Set<Constituent>) -> String{
 		var csv = "Navn,Studienummer"
-
-		for voter in self.eligibleVoters{
+		
+		let voters = Array(voters).sorted { $0.identifier < $1.identifier}
+		
+		for voter in voters {
 			csv += "\n"
 			
 			let name = voter.name ?? voter.identifier

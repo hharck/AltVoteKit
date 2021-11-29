@@ -1,5 +1,5 @@
 public struct VoteValidator: Validateable{
-	public typealias closureType = @Sendable ([SingleVote], _ eligibleUsers: Set<Constituent>, _ options: [VoteOption]) -> [SingleVote]
+	public typealias closureType = @Sendable ([SingleVote], _ constituents: Set<Constituent>, _ options: [VoteOption]) -> [SingleVote]
 	
 	/// The id of the validator
 	public let id: String
@@ -17,10 +17,10 @@ public struct VoteValidator: Validateable{
 	/// Validates the given votes
 	/// - Parameters:
 	///   - votes: The votes to validate
-	///   - eligibleUsers: The users allowed to vote
+	///   - constituents: The users allowed to vote
 	/// - Returns: An array of error strings. Can be used along with \.name when showing the errors on the frontend
-	public func validate(_ votes: [SingleVote], _ eligibleUsers: Set<Constituent>, allOptions: [VoteOption]) -> VoteValidationResult{
-		let offenders = closure(votes, eligibleUsers, allOptions)
+	public func validate(_ votes: [SingleVote], _ constituents: Set<Constituent>, allOptions: [VoteOption]) -> VoteValidationResult{
+		let offenders = closure(votes, constituents, allOptions)
 		let offenseTexts = offenders.map{offenseText($0, [])}
 		return VoteValidationResult(name: self.id, errors: offenseTexts)
 	}
