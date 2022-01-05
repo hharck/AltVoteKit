@@ -1,4 +1,5 @@
 import XCTest
+import VoteKit
 @testable import AltVoteKit
 
 final class AltVoteKitTests: XCTestCase {
@@ -9,7 +10,7 @@ final class AltVoteKitTests: XCTestCase {
 			let voter1 = Constituent(identifier: "Hans")
 			let voter2 = Constituent(identifier: "Sofus")
 			
-			let vote = Vote(id: UUID(), name: "", options: opt, votes: [SingleVote(voter1, rankings: opt.reversed())], validators: VoteValidator.defaultValidators, constituents: [voter1], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom])
+			let vote = AlternativeVote(name: "", options: opt, votes: [SingleVote(voter1, rankings: opt.reversed())], constituents: [voter1], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom], genericValidators: GenericValidator.allValidators, particularValidators: [])
 			
 			let countAll = try await vote.count()
 			let countWo0 = try await vote.count(force: false, excluding: [opt[0]])
@@ -79,7 +80,7 @@ final class AltVoteKitTests: XCTestCase {
 			], countWo02WS)
 			
 			
-			let winner = try await vote.findWinner(force: false)
+			let winner = try await vote.findWinner(force: false).winners()
 			XCTAssertEqual(Set(winner), [opt[0], opt[2]])
 			
 			// Tests removing a vote
@@ -89,12 +90,39 @@ final class AltVoteKitTests: XCTestCase {
 			let newCount = try await vote.count()
 			XCTAssertEqual(countAll, newCount)
 			
-			// Tests the "only verified" validator
-			await vote.addVote(SingleVote("voter3", rankings: opt))
-			let failedCount = try? await vote.count()
-			XCTAssertEqual(nil, failedCount)
 			
-		}
+			
+			
+			
+			// CSV:
+			let csv = await vote.toCSV()
+			let nVote = AlternativeVote.fromCSV(csv)
+			XCTAssertNotNil(nVote)
+			
+			
+			let nOptions = Set(await nVote!.options.map(\.name))
+			let oOptions = Set(await vote.options.map(\.name))
+			
+			XCTAssertEqual(nOptions, oOptions)
+			
+			let nVotes = await nVote!.votes.map{return ($0.constituent, $0.rankings.map(\.name))}.sorted{$0.0.identifier < $1.0.identifier}
+			let oVotes = await vote.votes.map{return ($0.constituent, $0.rankings.map(\.name))}.sorted{$0.0.identifier < $1.0.identifier}
+			
+			let nC = nVotes.map(\.0)
+			let oC = oVotes.map(\.0)
+			
+			let nR = nVotes.map(\.1)
+			let oR = oVotes.map(\.1)
+			
+			XCTAssertEqual(nC, oC)
+			XCTAssertEqual(nR, oR)
+			
+			
+			let nConstituents = await nVote!.constituents
+			let oConstituents = await vote.constituents
+			
+			XCTAssertEqual(nConstituents, oConstituents)
+        }
 	}
 	
 	
@@ -110,9 +138,9 @@ final class AltVoteKitTests: XCTestCase {
 			]
 			
 			
-			let vote = Vote(id: UUID(), name: "", options: options, votes: votes, validators: [ VoteValidator.noBlankVotes,VoteValidator.everyoneHasVoted,VoteValidator.oneVotePerUser], constituents: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom])
+            let vote = AlternativeVote(name: "", options: options, votes: votes, constituents: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom], genericValidators: [.everyoneHasVoted, .noBlankVotes], particularValidators: [])
 			
-			let nameOfWinner = try await vote.findWinner(force: false)[0].name
+			let nameOfWinner = try await vote.findWinner(force: false).winners().first!.name
 			XCTAssertEqual(nameOfWinner, "1")
 		}
 	}
@@ -143,7 +171,6 @@ final class AltVoteKitTests: XCTestCase {
 				line: line
 			)
 		}
-	}
-
+	}	
 }
 

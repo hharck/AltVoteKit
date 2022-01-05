@@ -1,3 +1,4 @@
+import VoteKit
 public protocol TieBreakable: Sendable{
 	
 	/// The name of the TieBreaker
