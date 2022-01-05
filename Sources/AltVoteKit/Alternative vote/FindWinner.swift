@@ -1,5 +1,46 @@
-extension AltVote{
-	public func findWinner(force: Bool, excluding: Set<VoteOption> = []) async throws -> [VoteOption]{
+import VoteKit
+extension AlternativeVote{
+	/// Counts the number of highest priority votes given to an option
+	/// - Parameters:
+	///   - force: Wether to count without regard to validations
+	///   - excluding: The options not relevant to this count
+	/// - Returns: The number of votes for each option
+	public func count(force: Bool = false, excluding: Set<VoteOption> = []) async throws -> [VoteOption: UInt]{
+		// Checks that all votes are valid
+		if !force{
+			try self.validateThrowing()
+		}
+		
+		//Removes all excluded options_
+		let excludingVotes = votes.compactMap { vote -> SingleVote? in
+			var vote = vote
+			vote.rankings = vote.rankings.filter { option in
+				//Filters out options that is in the excluding array
+				!excluding.contains(option)
+			}
+			//If all votes have been excluded this vote will not be put into 'excludingVotes'
+			guard !vote.rankings.isEmpty else {
+				return nil
+			}
+			return vote
+		}
+		
+		//Sets zero votes cast for all, allowed, options
+		let dict = Set(options)
+			.subtracting(excluding)
+			.reduce(into: [VoteOption: UInt]()) { partialResult, option in
+				partialResult[option] = 0
+			}
+		
+		//Counts the number of highest priority votes for each candidate
+		return excludingVotes.reduce(into: dict) { partialResult, vote in
+			let primaryOption = vote.rankings.first!
+			partialResult[primaryOption]! += 1
+		}
+	}
+	
+	
+	public func findWinner(force: Bool, excluding: Set<VoteOption> = []) async throws -> WinnerWrapper{
 		var winner: [VoteOption]? = nil
 		
 		var excluded = excluding
@@ -15,7 +56,7 @@ extension AltVote{
 			}
 			
 			//Counts the number of highest priority votes for each option
-			lastCount = try await count(force: excluded.isEmpty ? force : true, excluding: Array(excluded))
+			lastCount = try await count(force: excluded.isEmpty ? force : true, excluding: excluded)
 			
 			//Converts the counted votes into a tuple of number of votes and the option
 			let sortedList = lastCount!
@@ -101,7 +142,7 @@ extension AltVote{
 				}
 			}
 		}
-		return winner!
+		return WinnerWrapper(winner!)
 	}
 }
 
