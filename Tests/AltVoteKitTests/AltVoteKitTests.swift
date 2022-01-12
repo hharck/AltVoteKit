@@ -95,33 +95,37 @@ final class AltVoteKitTests: XCTestCase {
 			
 			
 			// CSV:
-			let csv = await vote.toCSV()
-			let nVote = AlternativeVote.fromCSV(csv)
-			XCTAssertNotNil(nVote)
-			
-			
-			let nOptions = Set(await nVote!.options.map(\.name))
-			let oOptions = Set(await vote.options.map(\.name))
-			
-			XCTAssertEqual(nOptions, oOptions)
-			
-			let nVotes = await nVote!.votes.map{return ($0.constituent, $0.rankings.map(\.name))}.sorted{$0.0.identifier < $1.0.identifier}
-			let oVotes = await vote.votes.map{return ($0.constituent, $0.rankings.map(\.name))}.sorted{$0.0.identifier < $1.0.identifier}
-			
-			let nC = nVotes.map(\.0)
-			let oC = oVotes.map(\.0)
-			
-			let nR = nVotes.map(\.1)
-			let oR = oVotes.map(\.1)
-			
-			XCTAssertEqual(nC, oC)
-			XCTAssertEqual(nR, oR)
-			
-			
-			let nConstituents = await nVote!.constituents
-			let oConstituents = await vote.constituents
-			
-			XCTAssertEqual(nConstituents, oConstituents)
+            func testCSVWithConf(config: CSVConfiguration) async{
+                let csv = await vote.toCSV(config: config)
+                let nVote = AlternativeVote.fromCSV(config: config, csv)
+                XCTAssertNotNil(nVote)
+                
+                
+                let nOptions = Set(await nVote!.options.map(\.name))
+                let oOptions = Set(await vote.options.map(\.name))
+                
+                XCTAssertEqual(nOptions, oOptions)
+                
+                let nVotes = await nVote!.votes.map{return ($0.constituent, $0.rankings.map(\.name))}.sorted{$0.0.identifier < $1.0.identifier}
+                let oVotes = await vote.votes.map{return ($0.constituent, $0.rankings.map(\.name))}.sorted{$0.0.identifier < $1.0.identifier}
+                
+                let nC = nVotes.map(\.0)
+                let oC = oVotes.map(\.0)
+                
+                let nR = nVotes.map(\.1)
+                let oR = oVotes.map(\.1)
+                
+                XCTAssertEqual(nC, oC)
+                XCTAssertEqual(nR, oR)
+                
+                
+                let nConstituents = await nVote!.constituents
+                let oConstituents = await vote.constituents
+                
+                XCTAssertEqual(nConstituents, oConstituents)
+            }
+            await testCSVWithConf(config: .defaultConfiguration())
+            await testCSVWithConf(config: .SMKid())
         }
 	}
 	
@@ -147,7 +151,7 @@ final class AltVoteKitTests: XCTestCase {
 	
 	
 	// https://www.swiftbysundell.com/articles/unit-testing-code-that-uses-async-await/
-	func runAsyncTest(named testName: String = #function, in file: StaticString = #file, at line: UInt = #line, withTimeout timeout: TimeInterval = 10, test: @escaping () async throws -> Void) {
+	func runAsyncTest(named testName: String = #function, in file: StaticString = #file, at line: UInt = #line, withTimeout timeout: TimeInterval = 20, test: @escaping () async throws -> Void) {
 		var thrownError: Error?
 		let errorHandler = { thrownError = $0 }
 		let expectation = expectation(description: testName)
