@@ -1,7 +1,7 @@
 import VoteKit
 
 public enum AlternativeVoteValidator: String, Codable, CaseIterable{
-	case allCandidatesRequiresAaVote
+	case allCandidatesRequiresAVote
 }
 
 extension AlternativeVoteValidator: Validateable{
@@ -11,12 +11,12 @@ extension AlternativeVoteValidator: Validateable{
 	
 	public func validate(_ votes: [SingleVote], _ constituents: Set<Constituent>, _ allOptions: [VoteOption]) -> VoteValidationResult {
 		switch self {
-		case .allCandidatesRequiresAaVote:
-			return validateAllCandidatesRequiresAaVote(votes, constituents, allOptions)
+		case .allCandidatesRequiresAVote:
+			return validateAllCandidatesRequiresAVote(votes, constituents, allOptions)
 		}
 	}
 	
-	func validateAllCandidatesRequiresAaVote(_ votes: [SingleVote], _ constituents: Set<Constituent>, _ allOptions: [VoteOption]) -> VoteValidationResult {
+	func validateAllCandidatesRequiresAVote(_ votes: [SingleVote], _ constituents: Set<Constituent>, _ allOptions: [VoteOption]) -> VoteValidationResult {
 		// Filters all users who hasn't voted for all available options
 		let errors = votes
 			.filter{ vote in
@@ -51,7 +51,7 @@ extension AlternativeVoteValidator: Validateable{
 	
 	public var name: String{
 		switch self {
-		case .allCandidatesRequiresAaVote:
+		case .allCandidatesRequiresAVote:
 			return "All candidates requires a vote"
 		}
 	}
