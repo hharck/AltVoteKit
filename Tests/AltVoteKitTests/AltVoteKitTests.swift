@@ -3,12 +3,12 @@ import VoteKit
 @testable import AltVoteKit
 
 final class AltVoteKitTests: XCTestCase {
-	func testExample() throws {
+	func testCount() throws {
 		runAsyncTest{
 			let opt: [VoteOption] = ["Person 1", "Person 2", "Person 3"]
 			
-			let voter1 = Constituent(identifier: "Hans")
-			let voter2 = Constituent(identifier: "Sofus")
+			let voter1 = Constituent.init(identifier: "Hans", tag: "Group1")
+			let voter2 = Constituent.init(identifier: "Sofus", tag: "Group2")
 			
 			let vote = AlternativeVote(name: "", options: opt, votes: [SingleVote(voter1, rankings: opt.reversed())], constituents: [voter1], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom], genericValidators: GenericValidator.allValidators, particularValidators: [])
 			
@@ -91,45 +91,76 @@ final class AltVoteKitTests: XCTestCase {
 			XCTAssertEqual(countAll, newCount)
 			
 			
-			
-			
-			
-			// CSV:
-            func testCSVWithConf(config: CSVConfiguration) async{
-                let csv = await vote.toCSV(config: config)
-                let nVote = AlternativeVote.fromCSV(config: config, csv)
-                XCTAssertNotNil(nVote)
-                
-                
-                let nOptions = Set(await nVote!.options.map(\.name))
-                let oOptions = Set(await vote.options.map(\.name))
-                
-                XCTAssertEqual(nOptions, oOptions)
-                
-                let nVotes = await nVote!.votes.map{return ($0.constituent, $0.rankings.map(\.name))}.sorted{$0.0.identifier < $1.0.identifier}
-                let oVotes = await vote.votes.map{return ($0.constituent, $0.rankings.map(\.name))}.sorted{$0.0.identifier < $1.0.identifier}
-                
-                let nC = nVotes.map(\.0)
-                let oC = oVotes.map(\.0)
-                
-                let nR = nVotes.map(\.1)
-                let oR = oVotes.map(\.1)
-                
-                XCTAssertEqual(nC, oC)
-                XCTAssertEqual(nR, oR)
-                
-                
-                let nConstituents = await nVote!.constituents
-                let oConstituents = await vote.constituents
-                
-                XCTAssertEqual(nConstituents, oConstituents)
-            }
-            await testCSVWithConf(config: .defaultConfiguration())
-            await testCSVWithConf(config: .SMKid())
-        }
+		}
 	}
 	
-	
+	func testCSV() throws {
+		runAsyncTest{
+			let opt: [VoteOption] = ["Person 1", "Person 2", "Person 3"]
+			
+			let voter1 = Constituent.init(identifier: "Hans", tag: "Group1")
+			let voter2 = Constituent.init(identifier: "Sofus", tag: "Group2")
+			
+			
+			let basicVotes = [SingleVote(voter1, rankings: opt.reversed()), SingleVote(voter2, rankings: Array(opt.dropFirst()))]
+			let vote2 = AlternativeVote(name: "", options: opt, votes: basicVotes, constituents: [voter1, voter2], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom], genericValidators: GenericValidator.allValidators, particularValidators: [])
+			
+			// CSV:
+			func testCSVWithConf(_ v: AlternativeVote, config: CSVConfiguration, withTags: Bool) async{
+				let csv = await v.toCSV(config: config)
+				let nVote: AlternativeVote! = AlternativeVote.fromCSV(config: config, csv)
+				XCTAssertNotNil(nVote)
+				
+				
+				let nOptions = Set(await nVote.options.map(\.name))
+				let oOptions = Set(await v.options.map(\.name))
+				
+				XCTAssertEqual(nOptions, oOptions)
+				
+				let nVotes = await nVote.votes
+					.sorted{$0.constituent.identifier < $1.constituent.identifier}
+					.map{($0.constituent, $0.rankings.map(\.name))}
+				let oVotes = await v.votes
+					.sorted{$0.constituent.identifier < $1.constituent.identifier}
+					.map{($0.constituent, $0.rankings.map(\.name))}
+				
+				let nC = nVotes.map(\.0)
+				var oC = oVotes.map(\.0)
+				if !withTags{
+					oC = oC.map(rmTag)
+				}
+				
+				let nR = nVotes.map(\.1)
+				let oR = oVotes.map(\.1)
+				
+				// Compares constituents who has cast a vote
+				XCTAssertEqual(nC, oC)
+				
+				// Compares the specific vote of a constituent
+				XCTAssertEqual(nR, oR)
+				
+				let nConstituents = await nVote.constituents//.sorted(by: {$0.identifier < $1.identifier})
+				var oConstituents = await v.constituents//.sorted(by: {$0.identifier < $1.identifier})
+				
+				// Removes tags from constituents if tags aren't part of this test
+				if !withTags{
+					oConstituents = Set(oConstituents.map(rmTag))
+				}
+				XCTAssertEqual(nConstituents, oConstituents)
+				
+				func rmTag(_ const: Constituent) -> Constituent{
+					var const = const
+					const.tag = nil
+					return const
+				}
+			}
+			
+			
+			await testCSVWithConf(vote2, config: .defaultConfiguration(), withTags: false)
+			await testCSVWithConf(vote2, config: .SMKid(), withTags: false)
+			await testCSVWithConf(vote2, config: try! .init(name: "test", preHeaders: ["Constituent id", "Tag"], preValues: ["{constituentID}", "{constituentTag}"], optionHeader: "{option name}", specialKeys: ["constituents-export show-tags":"1"]), withTags: true)
+		}
+	}
 	
 	func testSpecificCase() throws{
 		runAsyncTest{
@@ -142,7 +173,7 @@ final class AltVoteKitTests: XCTestCase {
 			]
 			
 			
-            let vote = AlternativeVote(name: "", options: options, votes: votes, constituents: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom], genericValidators: [.everyoneHasVoted, .noBlankVotes], particularValidators: [])
+			let vote = AlternativeVote(name: "", options: options, votes: votes, constituents: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom], genericValidators: [.everyoneHasVoted, .noBlankVotes], particularValidators: [])
 			
 			let nameOfWinner = try await vote.findWinner(force: false).winners().first!.name
 			XCTAssertEqual(nameOfWinner, "1")
@@ -175,6 +206,6 @@ final class AltVoteKitTests: XCTestCase {
 				line: line
 			)
 		}
-	}	
+	}
 }
 

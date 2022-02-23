@@ -120,13 +120,7 @@ extension AlternativeVote{
 						
 						let tbResult = tb.breakTie(votes: votes, options: bottom, optionsLeft: allOptions.subtracting(excluded).count)
 						
-						let toRemove = tbResult.compactMap{ res -> VoteOption? in
-							if res.value == .remove{
-								return res.key
-							} else{
-								return nil
-							}
-						}
+                        let toRemove = tbResult.filter{$0.value == .remove}.map(\.key)
 						
 						// Removes every option the tiebreaker marked with ".remove", if none was marked, it'll continue on to the next TieBreaker
 						if toRemove.isEmpty{
