@@ -158,7 +158,7 @@ final class AltVoteKitTests: XCTestCase {
 			
 			await testCSVWithConf(vote2, config: .defaultConfiguration(), withTags: false)
 			await testCSVWithConf(vote2, config: .SMKid(), withTags: false)
-			await testCSVWithConf(vote2, config: try! .init(name: "test", preHeaders: ["Constituent id", "Tag"], preValues: ["{constituentID}", "{constituentTag}"], optionHeader: "{option name}", specialKeys: ["constituents-export show-tags":"1"]), withTags: true)
+			await testCSVWithConf(vote2, config: .defaultWithTags(), withTags: true)
 		}
 	}
 	
