@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(name: "VoteKit", url: "https://git.smkid.dk/Harcker/VoteKit.git", branch: "main")
+        .package(name: "VoteKit", url: "https://git.smkid.dk/Harcker/VoteKit.git", branch: "test")
 		// .package(url: /* package url */, from: "1.0.0"),
     ],
     targets: [

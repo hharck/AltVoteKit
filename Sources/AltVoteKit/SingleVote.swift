@@ -23,7 +23,7 @@ extension SingleVote{
     public func csvValueFor(config: CSVConfiguration, option: VoteOption) -> String {
 		for i in 0..<rankings.count{
 			if rankings[i] == option{
-                if let suffix = config.specialKeys["Alternative vote priority suffix"]{
+                if let suffix = config.specialKeys.extraStrings["Alternative vote priority suffix"]{
                     return "\(i + 1)" + suffix
                 } else {
                     return "\(i + 1)"
@@ -38,7 +38,7 @@ extension SingleVote{
 			return nil
 		}
 		var errorFlag = false
-        let defaultSuffix = config.specialKeys["Alternative vote priority suffix"]
+        let defaultSuffix = config.specialKeys.extraStrings["Alternative vote priority suffix"]
 		let rankings = zip(options, values)
 			.compactMap{ option, str -> (VoteOption, Int)? in
                 let strVal: String
