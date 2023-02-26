@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(name: "VoteKit", url: "https://git.smkid.dk/Harcker/VoteKit.git", branch: "main")
+        .package(url: "https://git.smkid.dk/Harcker/VoteKit.git", "0.5.0"..<"0.6.0"),
 		// .package(url: /* package url */, from: "1.0.0"),
     ],
     targets: [
