@@ -1,6 +1,6 @@
 import VoteKit
 
-public enum AlternativeVoteValidator: String, Codable, CaseIterable{
+public enum AlternativeVoteValidator: String, Codable, CaseIterable {
 	case allCandidatesRequiresAVote
 }
 
@@ -41,7 +41,7 @@ extension AlternativeVoteValidator: Validateable{
 				"\(vote.constituent.identifier) hasn't voted for all candidates"
 			}
 		
-		return VoteValidationResult(name: self.name, errors: errors)
+        return makeResult(errors: errors)
 	}
 	
 	

@@ -9,7 +9,7 @@ final class AltVoteKitTests: XCTestCase {
 			let voter1 = Constituent.init(identifier: "Hans", tag: "Group1")
 			let voter2 = Constituent.init(identifier: "Sofus", tag: "Group2")
 			
-			let vote = AlternativeVote(name: "", options: opt, votes: [SingleVote(voter1, rankings: opt.reversed())], constituents: [voter1], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom], genericValidators: GenericValidator.allValidators, particularValidators: [])
+        let vote = AlternativeVote(name: "", options: opt, votes: [SingleVote(voter1, rankings: opt.reversed())], constituents: [voter1], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom], genericValidators: GenericValidator.allValidators, customValidators: [])
 			
 			let countAll = try await vote.count()
 			let countWo0 = try await vote.count(force: false, excluding: [opt[0]])
@@ -98,7 +98,7 @@ final class AltVoteKitTests: XCTestCase {
 			
 			
 			let basicVotes = [SingleVote(voter1, rankings: opt.reversed()), SingleVote(voter2, rankings: Array(opt.dropFirst()))]
-			let vote2 = AlternativeVote(name: "", options: opt, votes: basicVotes, constituents: [voter1, voter2], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom], genericValidators: GenericValidator.allValidators, particularValidators: [])
+        let vote2 = AlternativeVote(name: "", options: opt, votes: basicVotes, constituents: [voter1, voter2], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.keepRandom], genericValidators: GenericValidator.allValidators, customValidators: [])
 			
 			// CSV:
 			func testCSVWithConf(_ v: AlternativeVote, config: CSVConfiguration, withTags: Bool) async{
@@ -166,7 +166,7 @@ final class AltVoteKitTests: XCTestCase {
         ]
         
         
-        let vote = AlternativeVote(name: "", options: options, votes: votes, constituents: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom], genericValidators: [.everyoneHasVoted, .noBlankVotes], particularValidators: [])
+        let vote = AlternativeVote(name: "", options: options, votes: votes, constituents: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom], genericValidators: [.everyoneHasVoted, .noBlankVotes], customValidators: [])
         
         let nameOfWinner = try await vote.findWinner(force: false).winners().first!.name
         XCTAssertEqual(nameOfWinner, "1")

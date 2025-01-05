@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
 	name: "AltVoteKit",
 	platforms: [
-		.macOS(.v12),
-		.iOS(.v15)
+		.macOS(.v13),
+		.iOS(.v16)
 	],
 	products: [
 		// Products define the executables and libraries a package produces, and make them visible to other packages.
@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/TheHarcker/VoteKit.git", "0.6.1"..<"0.7.0"),
+        .package(url: "https://github.com/TheHarcker/VoteKit.git", "0.6.3"..<"0.7.0"),
 		// .package(url: /* package url */, from: "1.0.0"),
     ],
     targets: [
