@@ -139,7 +139,3 @@ extension AlternativeVote{
 		return WinnerWrapper(winner!)
 	}
 }
-
-
-
-

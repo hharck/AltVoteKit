@@ -3,8 +3,7 @@ import VoteKit
 @testable import AltVoteKit
 
 final class AltVoteKitTests: XCTestCase {
-	func testCount() throws {
-		runAsyncTest{
+	func testCount() async throws {
 			let opt: [VoteOption] = ["Person 1", "Person 2", "Person 3"]
 			
 			let voter1 = Constituent.init(identifier: "Hans", tag: "Group1")
@@ -89,13 +88,9 @@ final class AltVoteKitTests: XCTestCase {
 			
 			let newCount = try await vote.count()
 			XCTAssertEqual(countAll, newCount)
-			
-			
-		}
 	}
 	
-	func testCSV() throws {
-		runAsyncTest{
+	func testCSV() async throws {
 			let opt: [VoteOption] = ["Person 1", "Person 2", "Person 3"]
 			
 			let voter1 = Constituent.init(identifier: "Hans", tag: "Group1")
@@ -159,53 +154,22 @@ final class AltVoteKitTests: XCTestCase {
 			await testCSVWithConf(vote2, config: .defaultConfiguration(), withTags: false)
 			await testCSVWithConf(vote2, config: .SMKid(), withTags: false)
 			await testCSVWithConf(vote2, config: .defaultWithTags(), withTags: true)
-		}
 	}
 	
-	func testSpecificCase() throws{
-		runAsyncTest{
-			let options: [VoteOption] = ["1","2","3","4","5","6","7","8","9","10"]
-			
-			let votes: [SingleVote] = [.init("a", rankings: options),
-									   .init("b", rankings: options),
-									   .init("c", rankings: options.reversed()),
-									   .init("d", rankings: [5,4,3,2,1,10,9,8,7,6].map{options[$0 - 1]})
-			]
-			
-			
-			let vote = AlternativeVote(name: "", options: options, votes: votes, constituents: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom], genericValidators: [.everyoneHasVoted, .noBlankVotes], particularValidators: [])
-			
-			let nameOfWinner = try await vote.findWinner(force: false).winners().first!.name
-			XCTAssertEqual(nameOfWinner, "1")
-		}
-	}
-	
-	
-	// https://www.swiftbysundell.com/articles/unit-testing-code-that-uses-async-await/
-	func runAsyncTest(named testName: String = #function, in file: StaticString = #file, at line: UInt = #line, withTimeout timeout: TimeInterval = 20, test: @escaping () async throws -> Void) {
-		var thrownError: Error?
-		let errorHandler = { thrownError = $0 }
-		let expectation = expectation(description: testName)
-		
-		Task {
-			do {
-				try await test()
-			} catch {
-				errorHandler(error)
-			}
-			
-			expectation.fulfill()
-		}
-		
-		waitForExpectations(timeout: timeout)
-		
-		if let error = thrownError {
-			XCTFail(
-				"Async error thrown: \(error)",
-				file: file,
-				line: line
-			)
-		}
+	func testSpecificCase() async throws{
+        let options: [VoteOption] = ["1","2","3","4","5","6","7","8","9","10"]
+        
+        let votes: [SingleVote] = [.init("a", rankings: options),
+                                   .init("b", rankings: options),
+                                   .init("c", rankings: options.reversed()),
+                                   .init("d", rankings: [5,4,3,2,1,10,9,8,7,6].map{options[$0 - 1]})
+        ]
+        
+        
+        let vote = AlternativeVote(name: "", options: options, votes: votes, constituents: [], tieBreakingRules: [TieBreaker.dropAll, TieBreaker.removeRandom, TieBreaker.keepRandom], genericValidators: [.everyoneHasVoted, .noBlankVotes], particularValidators: [])
+        
+        let nameOfWinner = try await vote.findWinner(force: false).winners().first!.name
+        XCTAssertEqual(nameOfWinner, "1")
 	}
 }
 
