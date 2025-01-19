@@ -5,7 +5,7 @@ public enum TieBreaker: String, Codable, CaseIterable{
 }
 
 extension TieBreaker: normalTieBreakable{
-	public func breakTie(votes: [SingleVote], options: [VoteOption], optionsLeft: Int) -> [VoteOption : TieBreak]{
+	public func breakTie(votes: [SingleVote], options: [VoteOption], optionsLeft: Int) -> [VoteOption : TieBreak] {
 		assert(options.count <= optionsLeft)
 		if options.isEmpty{
 			return [:]
@@ -20,7 +20,6 @@ extension TieBreaker: normalTieBreakable{
 				result = dropAll(votes: votes, options: options, optionsLeft: optionsLeft)
 				
 			}
-			//Only checked during debug builds
 			assert(Set(result.keys) == Set(options), "Tiebreaker not returning a value for every option")
 			return result
 		}
