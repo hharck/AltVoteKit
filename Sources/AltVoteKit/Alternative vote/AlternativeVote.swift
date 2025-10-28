@@ -41,8 +41,13 @@ public actor AlternativeVote: SingleWinnerVote, HasCustomValidators {
 }
 
 // MARK: Required methods
-extension AlternativeVote{
-    public func count(force: Bool) async throws -> [VoteOption : UInt] {
+extension AlternativeVote {
+    public enum ErrorType: Error {
+        case tieBreaker(TieBreaker.TieBreakingError)
+        case validation(VoteKitValidationErrors)
+    }
+
+    public func count(force: Bool) async throws(ErrorType) -> [VoteOption : UInt] {
 		try await count(force: force, excluding: [])
 	}
 }

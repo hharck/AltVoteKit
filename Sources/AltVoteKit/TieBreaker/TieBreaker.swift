@@ -77,7 +77,7 @@ extension TieBreaker: normalTieBreakable{
 	}
 	
 	
-	enum TieBreakingError: Error{
+	public enum TieBreakingError: Error {
 		case noTBwasAbleToBreakTie
 	}
 }

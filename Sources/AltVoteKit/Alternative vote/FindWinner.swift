@@ -5,10 +5,14 @@ extension AlternativeVote{
 	///   - force: Wether to count without regard to validations
 	///   - excluding: The options not relevant to this count
 	/// - Returns: The number of votes for each option
-	public func count(force: Bool = false, excluding: Set<VoteOption> = []) async throws -> [VoteOption: UInt]{
+    public func count(force: Bool = false, excluding: Set<VoteOption> = []) async throws(ErrorType) -> [VoteOption: UInt]{
 		// Checks that all votes are valid
 		if !force{
-			try self.validateThrowing()
+            do {
+                try self.validateThrowing()
+            } catch {
+                throw .validation(error)
+            }
 		}
 		
 		//Removes all excluded options_
@@ -40,7 +44,7 @@ extension AlternativeVote{
 	}
 	
 	
-	public func findWinner(force: Bool, excluding: Set<VoteOption> = []) async throws -> WinnerWrapper{
+    public func findWinner(force: Bool, excluding: Set<VoteOption> = []) async throws(ErrorType) -> WinnerWrapper{
 		var winner: [VoteOption]? = nil
 		
 		var excluded = excluding
@@ -124,10 +128,11 @@ extension AlternativeVote{
 						
 						// Removes every option the tiebreaker marked with ".remove", if none was marked, it'll continue on to the next TieBreaker
 						if toRemove.isEmpty{
-							if tieBreaker.id == self.tieBreakingRules.last?.id{
-								throw TieBreaker.TieBreakingError.noTBwasAbleToBreakTie
-							}
-							continue
+							if tieBreaker.id == self.tieBreakingRules.last?.id {
+                                throw .tieBreaker(.noTBwasAbleToBreakTie)
+                            } else {
+                                continue
+                            }
 						} else {
 							excluded.formUnion(toRemove)
 							break
