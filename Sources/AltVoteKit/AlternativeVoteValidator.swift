@@ -4,34 +4,34 @@ public enum AlternativeVoteValidator: String, Codable, CaseIterable {
 	case allCandidatesRequiresAVote
 }
 
-extension AlternativeVoteValidator: Validateable{
+extension AlternativeVoteValidator: Validateable {
 	public static var allValidators: [AlternativeVoteValidator] {
 		Array(self.allCases)
 	}
-	
+
 	public func validate(_ votes: [SingleVote], _ constituents: Set<Constituent>, _ allOptions: [VoteOption]) -> VoteValidationResult {
 		switch self {
 		case .allCandidatesRequiresAVote:
 			return validateAllCandidatesRequiresAVote(votes, constituents, allOptions)
 		}
 	}
-	
+
 	func validateAllCandidatesRequiresAVote(_ votes: [SingleVote], _ constituents: Set<Constituent>, _ allOptions: [VoteOption]) -> VoteValidationResult {
 		// Filters all users who hasn't voted for all available options
 		let errors = votes
-			.filter{ vote in
+			.filter { vote in
 				// Checks for unexpected values and stops execution on debug builds
 				assert(allOptions.count >= vote.rankings.count, "Constituent has voted for more options than those available\nVoted for: \(vote.rankings.map(\.name))\nAvailable: \(allOptions.map(\.name))")
-				
+
 				/* One liner for the code below:
 				 //return !(options.count == $0.rankings.count || $0.rankings.isEmpty)
 				 */
-				
+
 				// Checks if the constituent has voted for all options
-				if allOptions.count == vote.rankings.count{
+				if allOptions.count == vote.rankings.count {
 					return false
 				} else if vote.rankings.isEmpty {
-					//It's a blank vote then, which is handled by the 'noBlankVotes' validator
+					// It's a blank vote then, which is handled by the 'noBlankVotes' validator
 					return false
 				} else {
 					return true
@@ -40,20 +40,19 @@ extension AlternativeVoteValidator: Validateable{
 			.map { vote in
 				"\(vote.constituent.identifier) hasn't voted for all candidates"
 			}
-		
+
         return makeResult(errors: errors)
 	}
-	
-	
+
 	public var id: String {
 		return self.rawValue
 	}
-	
-	public var name: String{
+
+	public var name: String {
 		switch self {
 		case .allCandidatesRequiresAVote:
 			return "All candidates requires a vote"
 		}
 	}
-	
+
 }
